@@ -6,7 +6,8 @@ This file contains a function matrix transpose
 
 def matrix_transpose(matrix):
     """
-    This is a function that return a new matrix with the original matrix transpose
+    This is a function that return a new matrix with the original
+    matrix transpose
     """
     filas = len(matrix)
     columnas = len(matrix[0])
