@@ -8,6 +8,5 @@ def np_shape(matrix):
     """
     This funcion calculates the shape of a numpy.ndarray
     """
-    return (len(matrix),) + (
-        isinstance(matrix[0], list) and np_shape(matrix[0]) or ()
-    )
+    return (len(matrix),) + (matrix and isinstance(matrix[0], list)
+        and np_shape(matrix[0]) or ())
