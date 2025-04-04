@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import numpy
 """
 This funcion calculates the shape of a numpy.ndarray
 """
@@ -9,4 +8,6 @@ def np_shape(matrix):
     """
     This funcion calculates the shape of a numpy.ndarray
     """
-    return matrix.shape
+    return (len(matrix),) + (
+        isinstance(matrix[0], list) and np_shape(matrix[0]) or ()
+    )
