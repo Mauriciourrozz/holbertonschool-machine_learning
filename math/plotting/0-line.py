@@ -16,5 +16,5 @@ def line():
     plt.figure(figsize=(6.4, 4.8))
 
     plt.plot(y, color="r")
-    plt.xlim(0, len(y) -1)
+    plt.xlim(0, len(y) - 1)
     plt.show()
