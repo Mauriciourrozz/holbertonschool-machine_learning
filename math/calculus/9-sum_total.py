@@ -2,10 +2,13 @@
 """
 summation_i_squared(n)
 """
+import numpy as np
 
 
 def summation_i_squared(n):
     """
     Function that calculates sigma
     """
-    return sum([i ** 2 for i in range(1, n + 1)])
+    if not isinstance(n, int) or n < 1:
+        return None
+    return n * (n + 1) * (2 * n + 1) // 6
