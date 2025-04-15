@@ -35,14 +35,24 @@ class Node:
     def count_nodes_below(self, only_leaves=False):
         """
         Function that count the number of nodes in a decision tree,
-        potentially excluding the root and internal nodes to count only the leaves
+        potentially excluding the root and internal nodes to count
+        only the leaves
         """
         if self.left_child is None and self.right_child is None:
             return 1
         else:
-            countleft = self.left_child.count_nodesbelow()
-            countright = self.right_child.count_nodesbelow()
-            return countleft + countright
+            countleft = (
+                self.left_child.count_nodes_below(only_leaves=only_leaves)
+                if self.left_child is not None
+                else 0)
+            countright = (
+                self.right_child.count_nodes_below(only_leaves=only_leaves)
+                if self.right_child is not None
+                else 0)
+            if only_leaves:
+                return countleft + countright
+            else:
+                return 1 + countleft + countright
 
 
 class Leaf(Node):
@@ -63,8 +73,8 @@ class Leaf(Node):
 
     def count_nodes_below(self, only_leaves=False):
         """
-        Function that count the number of nodes in a decision tree,
-        potentially excluding the root and internal nodes to count only the leaves
+        Function that count the number of nodes in a decision tree,potentially
+        excluding the root and internal nodes to count only the leaves
         """
         return 1
 
@@ -96,6 +106,7 @@ class Decision_Tree():
     def count_nodes(self, only_leaves=False):
         """
         Function that count the number of nodes in a decision tree,
-        potentially excluding the root and internal nodes to count only the leaves
+        potentially excluding the root and internal nodes to count
+        only the leaves
         """
         return self.root.count_nodes_below(only_leaves=only_leaves)
