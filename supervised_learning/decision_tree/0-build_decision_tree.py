@@ -28,8 +28,9 @@ class Node:
         if self.left_child or self.right_child:
             left_depth = self.left_child.max_depth_below()
             right_depth = self.right_child.max_depth_below()
-            return max(self.depth, left_depth, right_depth)
-        return self.depth
+            return max(left_depth, right_depth)
+        else:
+            return self.depth
 
 
 class Leaf(Node):
