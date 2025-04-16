@@ -61,7 +61,7 @@ class Node:
             new_text += ("    |  " + x) + "\n"
         return (new_text)
 
-    def right_child_add_prefix(text):
+    def right_child_add_prefix(self, text):
         lines = text.split("\n")
         new_text = "    +--" + lines[0]+"\n"
         for x in lines[1:]:
@@ -69,16 +69,17 @@ class Node:
         return (new_text)
 
     def __str__(self):
-        """
-        This method returns a readable representation
-        """
-        str = f"{'root' if self.is_root else '-> node'} \
+        """ This method returns a string representation of the node and its
+        subtree for easy viewing. """
+        result = f"{'root' if self.is_root else '-> node'} \
 [feature={self.feature}, threshold={self.threshold}]\n"
         if self.left_child:
-            str += self.left_child_add_prefix(self.left_child.__str__())
+            result += self.left_child_add_prefix(
+                self.left_child.__str__().strip())
         if self.right_child:
-            str += self.right_child_add_prefix(self.right_child.__str__())
-        return str
+            result += self.right_child_add_prefix(
+                self.right_child.__str__().strip())
+        return result
 
 
 class Leaf(Node):
