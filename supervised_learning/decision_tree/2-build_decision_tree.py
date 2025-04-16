@@ -69,17 +69,18 @@ class Node:
         return (new_text)
 
     def __str__(self):
-        """ This method returns a string representation of the node and its
-        subtree for easy viewing. """
-        result = f"{'root' if self.is_root else '-> node'} \
+        """
+        Function that returns a readable representation
+        """
+        str = f"{'root' if self.is_root else '-> node'} \
 [feature={self.feature}, threshold={self.threshold}]\n"
         if self.left_child:
-            result += self.left_child_add_prefix(
+            str += self.left_child_add_prefix(
                 self.left_child.__str__().strip())
         if self.right_child:
-            result += self.right_child_add_prefix(
+            str += self.right_child_add_prefix(
                 self.right_child.__str__().strip())
-        return result
+        return  str
 
 
 class Leaf(Node):
@@ -106,6 +107,9 @@ class Leaf(Node):
         return 1
 
     def __str__(self):
+        """
+        Function that returns a readable representation
+        """
         return (f"-> leaf [value={self.value}]")
 
 
@@ -142,4 +146,7 @@ class Decision_Tree():
         return self.root.count_nodes_below(only_leaves=only_leaves)
 
     def __str__(self):
+        """
+        Function that returns a readable representation
+        """
         return self.root.__str__()
