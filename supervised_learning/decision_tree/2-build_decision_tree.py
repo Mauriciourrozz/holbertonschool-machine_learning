@@ -55,6 +55,10 @@ class Node:
                 return 1 + countleft + countright
 
     def left_child_add_prefix(self, text):
+        """
+        This method adds visual prefixes to show the tree hierarchy when
+        it is printed.
+        """
         lines = text.split("\n")
         new_text = "    +--" + lines[0]+"\n"
         for x in lines[1:]:
@@ -62,6 +66,10 @@ class Node:
         return (new_text)
 
     def right_child_add_prefix(self, text):
+        """
+        This method adds visual prefixes to show the tree hierarchy when
+        it is printed.
+        """
         lines = text.split("\n")
         new_text = "    +--" + lines[0]+"\n"
         for x in lines[1:]:
