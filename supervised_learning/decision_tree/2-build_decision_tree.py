@@ -80,7 +80,7 @@ class Node:
         if self.right_child:
             str += self.right_child_add_prefix(
                 self.right_child.__str__().strip())
-        return  str
+        return str
 
 
 class Leaf(Node):
