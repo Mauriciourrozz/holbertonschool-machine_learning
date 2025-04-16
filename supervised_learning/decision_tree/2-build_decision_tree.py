@@ -75,11 +75,9 @@ class Node:
         str = f"{'root' if self.is_root else '-> node'} \
 [feature={self.feature}, threshold={self.threshold}]\n"
         if self.left_child:
-            str += self.left_child_add_prefix(
-                self.left_child.__str__().strip())
+            str += self.left_child_add_prefix(self.left_child.__str__())
         if self.right_child:
-            str += self.right_child_add_prefix(
-                self.right_child.__str__().strip())
+            str += self.right_child_add_prefix(self.right_child.__str__())
         return str
 
 
