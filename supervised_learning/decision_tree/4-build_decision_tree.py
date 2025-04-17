@@ -130,7 +130,7 @@ class Node:
         """
         Return a flat list of all leaf nodes under this node
         """
-        if not self.left_child and not self.right_child:
+        if self.left_child is None and self.right_child is None:
             return [self]
         else:
             hojas = []
