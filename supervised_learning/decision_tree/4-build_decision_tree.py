@@ -112,16 +112,16 @@ class Node:
             self.upper = {0: np.inf}
             self.lower = {0: -1*np.inf}
 
-        for child in [self.left_child, self.right_child]:
-            if child is not None:
-                child.lower = self.lower.copy()
-                child.upper = self.upper.copy()
-                f = self.feature
-                t = self.threshold
-                if child is self.left_child:
-                    child.upper[f] = t
-                else:
-                    child.lower[f] = t
+        if self.left_child:
+            self.left_child.lower = self.lower.copy()
+            self.left_child.upper = self.upper.copy()
+            self.left_child.lower[self.feature] = self.threshold
+
+        if self.right_child:
+            self.right_child.lower = self.lower.copy()
+            self.right_child.upper = self.upper.copy()
+            self.right_child.upper[self.feature] = self.threshold
+
         for child in [self.left_child, self.right_child]:
             if child is not None:
                 child.update_bounds_below()
@@ -130,15 +130,12 @@ class Node:
         """
         Return a flat list of all leaf nodes under this node
         """
-        if self.left_child is None and self.right_child is None:
-            return [self]
-        else:
-            hojas = []
-            if self.right_child:
-                hojas.extend(self.right_child.get_leaves_below())
-            if self.left_child:
-                hojas.extend(self.left_child.get_leaves_below())
-            return hojas
+        hojas = []
+        if self.left_child:
+            hojas += self.left_child.get_leaves_below()
+        if self.right_child:
+            hojas += self.right_child.get_leaves_below()
+        return hojas
 
 
 class Leaf(Node):
