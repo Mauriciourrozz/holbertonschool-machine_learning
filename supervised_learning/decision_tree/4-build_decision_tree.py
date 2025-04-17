@@ -134,10 +134,10 @@ class Node:
             return [self]
         else:
             hojas = []
-            if self.left_child:
-                hojas.extend(self.left_child.get_leaves_below())
             if self.right_child:
                 hojas.extend(self.right_child.get_leaves_below())
+            if self.left_child:
+                hojas.extend(self.left_child.get_leaves_below())
             return hojas
 
 
