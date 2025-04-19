@@ -372,7 +372,6 @@ class Decision_Tree():
             node.right_child = self.get_node_child(node, right_population)
             self.fit_node(node.right_child)
 
-
     def get_leaf_child(self, node, sub_population):
         """
         Create a leaf node with the majority target value
