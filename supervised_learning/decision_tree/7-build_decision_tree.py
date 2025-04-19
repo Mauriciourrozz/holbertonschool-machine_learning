@@ -292,31 +292,29 @@ class Decision_Tree():
         )
 
     def fit(self, explanatory, target, verbose=0):
-        """
-        Fit the decision tree to the training data.
-        """
+        """Fit the decision tree to the training data."""
         if self.split_criterion == "random":
             self.split_criterion = self.random_split_criterion
         else:
             self.split_criterion = self.Gini_split_criterion
         self.explanatory = explanatory
         self.target = target
-        self.root.sub_population = np.ones_like(self.target, dtype='bool')
+        self.root.sub_population = np.ones_like(self.target, dtype=bool)
+        self.root.depth = 0
 
         self.fit_node(self.root)
-
         self.update_predict()
 
         if verbose == 1:
-            print(f"""  Training finished.
-    - Depth                     : {self.depth()}
-    - Number of nodes           : {self.count_nodes()}
-    - Number of leaves          : {self.count_nodes(only_leaves=True)}
-    - Accuracy on training data : {
-                                    self.accuracy(
-                                        self.explanatory, self.target
-                                        )
-                }""")
+            print(
+                f"  Training finished.\n"
+                f"    - Depth                     : {self.depth()}\n"
+                f"    - Number of nodes           : {self.count_nodes()}\n"
+                f"    - Number of leaves          : "
+                f"{self.count_nodes(only_leaves=True)}\n"
+                f"    - Accuracy on training data : "
+                f"{self.accuracy(self.explanatory, self.target)}"
+            )
 
     def np_extrema(self, arr):
         """
