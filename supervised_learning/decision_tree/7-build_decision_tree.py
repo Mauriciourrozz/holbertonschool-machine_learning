@@ -349,7 +349,7 @@ class Decision_Tree():
         # Is left node a leaf ?
         n_left = np.sum(left_population)
         cond_min = (n_left < self.min_pop)
-        cond_depth = (node.depth >= self.max_depth)
+        cond_depth = (node.depth + 1 >= self.max_depth)
         vals_left = self.target[left_population]
         cond_pure = (np.unique(vals_left).size == 1)
         is_left_leaf = cond_min or cond_depth or cond_pure
@@ -371,6 +371,7 @@ class Decision_Tree():
         else:
             node.right_child = self.get_node_child(node, right_population)
             self.fit_node(node.right_child)
+
 
     def get_leaf_child(self, node, sub_population):
         """
