@@ -435,16 +435,26 @@ class Decision_Tree():
         left_counts = Left_bool .sum(axis=0)
         right_counts = Right_bool.sum(axis=0)
 
-        p_left = left_counts / n
-        p_right = right_counts / n
+        left_n = left_counts .sum(axis=1)
+        right_n = right_counts.sum(axis=1)
 
-        gini_left = 1 - np.sum(p_left**2,  axis=1)
-        gini_right = 1 - np.sum(p_right**2, axis=1)
+        p_left = np.divide(
+            left_counts,
+            left_n[:, None],
+            out=np.zeros_like(left_counts, dtype=float),
+            where=left_n[:, None] != 0
+        )
+        p_right = np.divide(
+            right_counts,
+            right_n[:, None],
+            out=np.zeros_like(right_counts, dtype=float),
+            where=right_n[:, None] != 0
+        )
 
-        left_prop = left_counts .sum(axis=1) / n
-        right_prop = right_counts.sum(axis=1) / n
+        gini_left = 1 - np.sum(p_left ** 2,  axis=1)
+        gini_right = 1 - np.sum(p_right ** 2, axis=1)
 
-        gini_avg = left_prop * gini_left + right_prop * gini_right
+        gini_avg = (left_n / n) * gini_left + (right_n / n) * gini_right
 
         idx = np.argmin(gini_avg)
         return thresholds[idx], gini_avg[idx]
