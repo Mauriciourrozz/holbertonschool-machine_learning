@@ -56,7 +56,7 @@ class Neuron:
         """
         return self.__A
 
-    def forward_prop(self, X):
+    def forward_prop(self, X): #PROPAGACION HACIA ADELANTE
         """
         Perform forward propagation for the neuron.
         """
