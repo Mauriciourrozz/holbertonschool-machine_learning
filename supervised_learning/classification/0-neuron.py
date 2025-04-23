@@ -31,6 +31,6 @@ class Neuron:
         if nx < 1:
             raise ValueError("nx must be a positive integer")
         self.nx = nx
-        self.W = np.random.rand(1, nx)  # pesos de la neurona
-        self.b = 0  # Sesgo (bias)
-        self.A = 0  # salida activada
+        self.W = np.random.randn(1, nx)
+        self.b = 0
+        self.A = 0
