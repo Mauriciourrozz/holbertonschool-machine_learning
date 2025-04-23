@@ -59,6 +59,9 @@ class Neuron:
     def forward_prop(self, X): #PROPAGACION HACIA ADELANTE
         """
         Perform forward propagation for the neuron.
+        Forward propagation: process of computing the neuron's output by
+        applying weights and bias to inputs and passing the result through
+        an activation function.
         """
         # Z = W·X + b: producto punto entre pesos y
         # entradas para obtener la activación lineal
