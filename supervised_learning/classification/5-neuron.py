@@ -136,7 +136,7 @@ class Neuron:
         m = X.shape[1]
 
         # Error lineal, diferencia entre etiqueta real y predicción
-        dZ = Y - A
+        dZ = A - Y
 
         # Gradiente de los pesos
         dW = (1/m) * dZ.dot(X.T)
