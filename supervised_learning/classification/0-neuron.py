@@ -26,7 +26,7 @@ class Neuron:
             TypeError: If nx is not an integer.
             ValueError: If nx is less than 1.
         """
-        if type(nx) is not int:
+        if not isinstance(nx, int):
             raise TypeError("nx must be an integer")
         if nx < 1:
             raise ValueError("nx must be a positive integer")
