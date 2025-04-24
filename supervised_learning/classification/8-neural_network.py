@@ -62,7 +62,7 @@ class NeuralNetwork:
         self.A1 = 0
 
         # vector de pesas para la neurona de salida
-        self.W2 = np.random.randn(nodes, nx)
+        self.W2 = np.random.randn(1, nodes)
 
         # sesgo para la neurona de salida
         self.b2 = 0
