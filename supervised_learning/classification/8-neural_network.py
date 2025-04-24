@@ -53,16 +53,16 @@ class NeuralNetwork:
         self.nodes = nodes
 
         # vector de pesas para la capa oculta
-        self.W1 = np.random.randn(nodes, nx)
+        self.W1 = np.random.normal(0, 1, (nodes, nx))
 
         # sesgo para la capa oculta
-        self.b1 = 0
+        self.b1 = np.zeros((nodes, 1))
 
         # salida activada para la capa oculta
         self.A1 = 0
 
         # vector de pesas para la neurona de salida
-        self.W2 = np.random.randn(1, nodes)
+        self.W2 = np.random.normal(0, 1, (1, nodes))
 
         # sesgo para la neurona de salida
         self.b2 = 0
