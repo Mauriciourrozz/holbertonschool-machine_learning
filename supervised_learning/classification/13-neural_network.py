@@ -198,7 +198,7 @@ class NeuralNetwork:
         Updates the parameters (weights and biases) of the neural
         network using gradient descent.
         """
-        # Número de ejemplos
+        # Numero de ejemplos
         m = X.shape[1]
 
         # Gradientes de la capa de salida
@@ -211,7 +211,7 @@ class NeuralNetwork:
         dW1 = np.dot(dZ1, X.T) / m
         db1 = np.sum(dZ1, axis=1, keepdims=True) / m
 
-        # Actualización de los parámetros
+        # Actualización de los parametros
         self.__W1 -= alpha * dW1
         self.__b1 -= alpha * db1
         self.__W2 -= alpha * dW2
