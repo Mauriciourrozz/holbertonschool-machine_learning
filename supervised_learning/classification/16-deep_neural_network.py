@@ -17,9 +17,9 @@ class DeepNeuralNetwork:
     Attributes:
         L (int): number of layers in the network.
         cache (dict): intermediary values (activations).
-        weights (dict): weights and biases of each layer.
+        weights (dict): weights and biases of each layers.
     """
-    def __init__(self, nx, layer):
+    def __init__(self, nx, layers):
         """
         Initialize a DeepNeuralNetwork
         """
@@ -27,36 +27,30 @@ class DeepNeuralNetwork:
             raise TypeError("nx must be an integer")
         if nx < 1:
             raise ValueError("nx must be a positive integer")
-        if not isinstance(layer, list) or len(layer) == 0:
+        if not isinstance(layers, list) or len(layers) == 0:
             raise TypeError("layers must be a list of positive integers")
 
         # número de características de entrada
         self.nx = nx
         # lista que representa el número de nodos en cada capa de la red
-        self.layer = layer
+        self.layers = layers
         # número de capas en la red neuronal
-        self.L = len(layer)
+        self.L = len(layers)
         # diccionario para mantener todos los valores intermediarios de la red
         self.cache = {}
         # diccionario para contener todos los pesos y sesgados de la red
         self.weights = {}
-        for idx, nodes in enumerate(layer, start=1):
-            # comprobacion de que cada elemento de layer sea >0 y no sea vacia
-            if not isinstance(nodes, int) or nodes < 1:
-                raise TypeError("layer must be a list of positive integers")
 
-            # Si estoy en la primera capa (idx == 1), las entradas son nx
-            # Si estoy en la capa 2, la capa anterior es la 1,
-            # que en la lista está en layer[0]. Y 0 es 2 - 2
-            # de ahi layer[idx-2]:
-            # Para idx = 2, idx-2 = 0: layer[0]: nodos de la capa 1
-            # Para idx = 3, idx-2 = 1: layer[1]: nodos de la capa 2
-            n_prev = nx if idx == 1 else layer[idx - 2]
+        for i in range(self.L):
+            # Comprobacion de cada elemento de layers es entero positivo
+            if not isinstance(layers[i], int) or layers[i] <= 0:
+                raise TypeError("layers must be a list of positive integers")
 
-            # se inicializan los pesos usando He et al
-            self.weights[f"W{idx}"] = (
-                np.random.randn(nodes, n_prev) * np.sqrt(2 / n_prev)
-            )
+            self.weights['b' + str(i + 1)] = np.zeros((layers[i], 1))
 
-            # inicializa sesgos en 0 y se guarda como pide la letra
-            self.weights[f"b{idx}"] = np.zeros((nodes, 1))
+            if i == 0:
+                self.weights['W' + str(i + 1)] = np.random.randn(
+                    layers[i], nx) * np.sqrt(2 / nx)
+            else:
+                self.weights['W' + str(i + 1)] = np.random.randn(
+                    layers[i], layers[i - 1]) * np.sqrt(2 / layers[i - 1])
