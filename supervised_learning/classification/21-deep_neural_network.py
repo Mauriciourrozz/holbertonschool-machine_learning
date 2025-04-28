@@ -160,14 +160,32 @@ class DeepNeuralNetwork:
             intermediary values of the network
         alpha is the learning rate
         """
+        # numero de ejemplos
         m = Y.shape[1]
+
+        # activación de la última capa
         A = cache['A' + str(self.L)]
+
+        # gradiente de la capa de salida
         dZ = A - Y
+
+        # recorre de atras hacia adelante
         for i in range(self.L, 0, -1):
+            # activación de la capa anterior
             A_prev = cache['A' + str(i - 1)]
+
+            # pesos de la capa actual
             W = self.weights['W' + str(i)]
+
+            # gradiente de los pesos de la capa actual
             dW = np.dot(dZ, A_prev.T) / m
+
+            # gradiente de los sesgos de la capa actual
             db = np.sum(dZ, axis=1, keepdims=True) / m
+
+            # gradiente de la capa anterior
             dZ = np.dot(W.T, dZ) * (A_prev * (1 - A_prev))
+
+            # actualizamos pesos y sesgos
             self.weights['W' + str(i)] -= alpha * dW
             self.weights['b' + str(i)] -= alpha * db
