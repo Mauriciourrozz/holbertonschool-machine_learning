@@ -78,6 +78,21 @@ class DeepNeuralNetwork:
         return self.__weights
 
     def forward_prop(self, X):
+        """
+        Perform forward propagation through the deep neural network.
+
+        Args:
+            X (np.ndarray): Input data of shape (nx, m), where
+                nx is the number of input features and m is
+                the number of examples.
+
+        Returns:
+            tuple:
+                - AL (np.ndarray): Activation of the last layer
+                (shape matches the output layer size and m).
+                - cache (dict): Dictionary containing all activations:
+                    keys "A0", "A1", …, "A{L}" with their corresponding arrays.
+        """
         # aqui guardo x en el diccionario cache con la clave A0
         self.__cache["A0"] = X
         for i in range(1, self.L + 1):
@@ -93,7 +108,7 @@ class DeepNeuralNetwork:
             # Calcula la suma ponderada
             zl = Wl @ a_anterior + bl
 
-            # Aplica la función sigmoidea
+            # Aplica la función sigmoidea para obtener la nueva activación Al
             Al = 1 / (1 + np.exp(-zl))
 
             # Mete Al en self.__cache con la clave "A{i}"
