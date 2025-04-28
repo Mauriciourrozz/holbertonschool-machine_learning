@@ -152,37 +152,22 @@ class DeepNeuralNetwork:
         return prediccion, costo
 
     def gradient_descent(self, Y, cache, alpha=0.05):
-        # cantidad de ejemplos de entrenamiento
+        """
+        calculates one pass of gradient descent on the neural network
+        Y numpy.ndarray with shape (1, m)
+            that contains the correct labels for the input data
+        cache is a dictionary containing all the
+            intermediary values of the network
+        alpha is the learning rate
+        """
         m = Y.shape[1]
-
-        # número de capas en la red neuronal
-        L = self.L
-
-        # error en la capa final (la de salida)
-        dA = cache[f"A{L}"] - Y  # La diferencia entre la activación de la capa de salida y las etiquetas reales
-
-        # bucle que va desde la última capa hacia la primera
-        for l in range(L, 0, -1):
-            
-            # Calculamos el error de la capa actual (dZ) utilizando la derivada de la activación sigmoide
-            dZ = dA * cache[f"A{l}"] * (1 - cache[f"A{l}"])
-
-            # Calculamos cómo deben cambiar los pesos de la capa (dW)
-            # El gradiente de los pesos se calcula multiplicando dZ por A^(l-1) (activación de la capa anterior)
-            dW = np.dot(dZ, cache[f"A{l-1}"].T) / m
-
-            # Calculamos el cambio necesario en los sesgos (db)
-            # Se promedia dZ a través de todas las muestras de entrenamiento
+        A = cache['A' + str(self.L)]
+        dZ = A - Y
+        for i in range(self.L, 0, -1):
+            A_prev = cache['A' + str(i - 1)]
+            W = self.weights['W' + str(i)]
+            dW = np.dot(dZ, A_prev.T) / m
             db = np.sum(dZ, axis=1, keepdims=True) / m
-
-            # Actualizamos los pesos y sesgos de la capa
-            # Actualizamos con el gradiente calculado y la tasa de aprendizaje
-            self.__weights[f"W{l}"] -= alpha * dW
-            self.__weights[f"b{l}"] -= alpha * db
-
-            # Calculamos el error para la capa anterior, multiplicando los pesos transpuestos de la capa actual
-            # por el error de la capa actual. Esto es necesario para la retropropagación.
-            if l > 1:  # Para evitar un error en la primera capa (no hay capa previa)
-                dA = np.dot(self.__weights[f"W{l}"].T, dZ) * cache[f"A{l-1}"] * (1 - cache[f"A{l-1}"])
-
-
+            dZ = np.dot(W.T, dZ) * (A_prev * (1 - A_prev))
+            self.weights['W' + str(i)] -= alpha * dW
+            self.weights['b' + str(i)] -= alpha * db
