@@ -236,12 +236,6 @@ class DeepNeuralNetwork:
         if step <= 0 or step > iterations:
             raise ValueError("step must be positive and <= iterations")
 
-        if verbose or graph:
-            if not isinstance(step, int):
-                raise TypeError("step must be an integer")
-            if step <= 0 or step > iterations:
-                raise ValueError("step must be positive and <= iterations")
-
         iteraciones = []
         costos = []
         a0, _ = self.forward_prop(X)
@@ -292,6 +286,9 @@ class DeepNeuralNetwork:
         If an error occurs (e.g., file not found or unpickling fails),
         this method returns None.
         """
+        if not filename.endswith(".pkl"):
+            filename = filename + ".pkl"
+
         try:
             with open(filename, "rb") as file:
                 return pickle.load(file)
