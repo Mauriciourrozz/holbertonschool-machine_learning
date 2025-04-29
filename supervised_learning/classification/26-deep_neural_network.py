@@ -245,7 +245,6 @@ class DeepNeuralNetwork:
         if verbose:
             print(f"Cost after 0 iterations: {costo0}")
 
-
         for i in range(1, iterations + 1):
             A, cache = self.forward_prop(X)
             self.gradient_descent(Y, cache, alpha)
