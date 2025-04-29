@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+This module contains a function one_hot_encode
+"""
 import numpy as np
 
 
