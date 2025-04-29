@@ -237,7 +237,7 @@ class DeepNeuralNetwork:
 
         iteraciones = []
         costos = []
-        a0 = self.forward_prop(X)
+        a0, _ = self.forward_prop(X)
         costo0 = self.cost(Y, a0)
         iteraciones.append(0)
         costos.append(costo0)
@@ -248,13 +248,13 @@ class DeepNeuralNetwork:
         for i in range(1, iterations + 1):
             A, cache = self.forward_prop(X)
             self.gradient_descent(Y, cache, alpha)
-            if i % step == 0 or i == iterations:
+            if (i % step == 0) or (i == iterations):
                 cost_i = self.cost(Y, A)
                 iteraciones.append(i)
                 costos.append(cost_i)
 
                 if verbose:
-                    print(f"Cost after {iterations} iterations: {cost_i}")
+                    print(f"Cost after {i} iterations: {cost_i}")
 
         if graph:
             plt.plot(iteraciones, costos)
