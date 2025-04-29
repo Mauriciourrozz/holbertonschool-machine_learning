@@ -290,7 +290,7 @@ class DeepNeuralNetwork:
             filename = filename + ".pkl"
 
         try:
-            with open(filename, "rb") as file:
+            with open(filename, "+rb") as file:
                 return pickle.load(file)
         except Exception:
             return None
