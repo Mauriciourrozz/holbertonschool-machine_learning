@@ -31,7 +31,7 @@ class DeepNeuralNetwork:
             raise ValueError("nx must be a positive integer")
         if not isinstance(layers, list) or len(layers) == 0:
             raise TypeError("layers must be a list of positive integers")
-        if activation not in ['sig', 'tanh']:
+        if activation != 'sig' or activation != 'tanh':
             raise ValueError("activation must be 'sig' or 'tanh'")
 
         # número de características de entrada
@@ -48,7 +48,7 @@ class DeepNeuralNetwork:
         self.__activation = activation
 
         for i in range(self.L):
-            # Comprobación de cada elemento de layers es entero positivo
+            # Comprobacion de cada elemento de layers es entero positivo
             if not isinstance(layers[i], int) or layers[i] <= 0:
                 raise TypeError("layers must be a list of positive integers")
 
@@ -83,6 +83,13 @@ class DeepNeuralNetwork:
         """
         return self.__weights
 
+    @property
+    def activation(self):
+        """
+        Get the activation method
+        """
+        return self.__activation
+
     def forward_prop(self, X):
         """
         Perform forward propagation through the deep neural network.
@@ -102,30 +109,35 @@ class DeepNeuralNetwork:
         # Guardamos X en el diccionario cache con la clave A0
         self.__cache["A0"] = X
         for i in range(1, self.L + 1):
-            # Extraemos los pesos Wl y los sesgos bl para la capa i
+            # Sacamos de self.__weights la matriz de pesos Wl y
+            # el vector de sesgo bl para la capa i
             Wl = self.__weights[f"W{i}"]
             bl = self.__weights[f"b{i}"]
 
-            # Recuperamos la activación de la capa anterior, bajo "A{i-1}"
+            # Buscamos en self.__cache la activación de la capa anterior,
+            # bajo "A{i-1}"
             a_anterior = self.__cache[f"A{i - 1}"]
 
             # Calculamos la suma ponderada
             zl = Wl @ a_anterior + bl
 
+            # Seleccionamos la activación según el valor de self.__activation
+            if self.__activation == 'sig':  # Sigmoidea para capas intermedias
+                Al = 1 / (1 + np.exp(-zl))
+            elif self.__activation == 'tanh':  # Tanh para capas intermedias
+                Al = np.tanh(zl)
+            else:
+                raise ValueError("activation must be 'sig' or 'tanh'")
+
             # Softmax en la última capa para obtener probabilidades
             if i == self.L:
                 exp_zl = np.exp(zl - np.max(zl, axis=0, keepdims=True))
                 Al = exp_zl / np.sum(exp_zl, axis=0, keepdims=True)
-            # Sigmoidea o Tanh para las capas intermedias
-            else:
-                if self.__activation == 'sig':
-                    Al = 1 / (1 + np.exp(-zl))  # Sigmoidea
-                elif self.__activation == 'tanh':
-                    Al = np.tanh(zl)  # Tanh
 
-            # Guardamos la activación en self.__cache con la clave "A{i}"
+            # Guardamos Al en self.__cache con la clave "A{i}"
             self.__cache[f"A{i}"] = Al
 
+        # Devolvemos la última activación y el diccionario cache
         return Al, self.__cache
 
     def cost(self, Y, A):
@@ -166,14 +178,14 @@ class DeepNeuralNetwork:
 
     def gradient_descent(self, Y, cache, alpha=0.05):
         """
-        calculates one pass of gradient descent on the neural network
-        Y numpy.ndarray with shape (1, m)
-            that contains the correct labels for the input data
-        cache is a dictionary containing all the
-            intermediary values of the network
-        alpha is the learning rate
+        Calculates one pass of gradient descent on the neural network.
+        
+        Args:
+            Y (np.ndarray): True labels of shape (1, m).
+            cache (dict): Dictionary containing all intermediary values of the network.
+            alpha (float): The learning rate.
         """
-        # Numero de ejemplos
+        # Número de ejemplos
         m = Y.shape[1]
 
         # Activación de la última capa
@@ -182,7 +194,7 @@ class DeepNeuralNetwork:
         # Gradiente de la capa de salida
         dZ = A - Y
 
-        # Recorremos de atrás hacia adelante
+        # Recorre de atrás hacia adelante
         for i in range(self.L, 0, -1):
             # Activación de la capa anterior
             A_prev = cache['A' + str(i - 1)]
@@ -197,10 +209,12 @@ class DeepNeuralNetwork:
             db = np.sum(dZ, axis=1, keepdims=True) / m
 
             # Gradiente de la capa anterior
-            if self.__activation == 'sig':  # Si la activación es sigmoidea
-                dZ = np.dot(W.T, dZ) * (A_prev * (1 - A_prev))  # Derivada de sigmoidea
-            elif self.__activation == 'tanh':  # Si la activación es tanh
-                dZ = np.dot(W.T, dZ) * (1 - np.tanh(A_prev) ** 2)  # Derivada de tanh
+            if self.__activation == 'sig':  # Para la sigmoidea
+                dZ = np.dot(W.T, dZ) * (A_prev * (1 - A_prev))
+            elif self.__activation == 'tanh':  # Para tanh
+                dZ = np.dot(W.T, dZ) * (1 - A_prev ** 2)
+            else:
+                raise ValueError("activation must be 'sig' or 'tanh'")
 
             # Actualizamos pesos y sesgos
             self.weights['W' + str(i)] -= alpha * dW
@@ -245,6 +259,10 @@ class DeepNeuralNetwork:
             raise TypeError("alpha must be a float")
         if alpha <= 0:
             raise ValueError("alpha must be positive")
+        # if not isinstance(step, int):
+        #     raise TypeError("step must be an integer")
+        # if step <= 0 or step > iterations:
+        #     raise ValueError("step must be positive and <= iterations")
 
         iteraciones = []
         costos = []
