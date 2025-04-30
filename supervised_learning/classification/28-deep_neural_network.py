@@ -179,10 +179,11 @@ class DeepNeuralNetwork:
     def gradient_descent(self, Y, cache, alpha=0.05):
         """
         Calculates one pass of gradient descent on the neural network.
-        
+
         Args:
             Y (np.ndarray): True labels of shape (1, m).
-            cache (dict): Dictionary containing all intermediary values of the network.
+            cache (dict): Dictionary containing all intermediary values of the
+            network.
             alpha (float): The learning rate.
         """
         # Número de ejemplos
