@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+"""
+This module contains a class RandomForest
+"""
 import numpy as np
 Decision_Tree = __import__('8-build_decision_tree').Decision_Tree
 
