@@ -116,7 +116,7 @@ class DeepNeuralNetwork:
                 Al = exp_zl / np.sum(exp_zl, axis=0, keepdims=True)
             # Sigmoidea para las capas intermedias
             else:
-                 Al = 1 / (1 + np.exp(-zl))
+                Al = 1 / (1 + np.exp(-zl))
             # Mete Al en self.__cache con la clave "A{i}"
             self.__cache[f"A{i}"] = Al
 
