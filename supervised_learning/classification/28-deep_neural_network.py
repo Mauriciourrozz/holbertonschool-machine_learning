@@ -44,11 +44,11 @@ class DeepNeuralNetwork:
         self.__cache = {}
         # diccionario para contener todos los pesos y sesgados de la red
         self.__weights = {}
-        #  tipo de función de activación utilizada en las capas ocultas
+        # tipo de función de activación utilizada en las capas ocultas
         self.__activation = activation
 
         for i in range(self.L):
-            # Comprobacion de cada elemento de layers es entero positivo
+            # Comprobación de cada elemento de layers es entero positivo
             if not isinstance(layers[i], int) or layers[i] <= 0:
                 raise TypeError("layers must be a list of positive integers")
 
@@ -99,36 +99,33 @@ class DeepNeuralNetwork:
                 - cache (dict): Dictionary containing all activations:
                     keys "A0", "A1", …, "A{L}" with their corresponding arrays.
         """
-        # aqui guardo x en el diccionario cache con la clave A0
+        # Guardamos X en el diccionario cache con la clave A0
         self.__cache["A0"] = X
         for i in range(1, self.L + 1):
-            # saca de self.__weights la matriz de pesos Wl y
-            # el vector de sesgo bl para la capa i
+            # Extraemos los pesos Wl y los sesgos bl para la capa i
             Wl = self.__weights[f"W{i}"]
             bl = self.__weights[f"b{i}"]
 
-            # Busca en self.__cache la activación de la capa anterior,
-            # bajo "A{i-1}"
+            # Recuperamos la activación de la capa anterior, bajo "A{i-1}"
             a_anterior = self.__cache[f"A{i - 1}"]
 
-            # Calcula la suma ponderada
+            # Calculamos la suma ponderada
             zl = Wl @ a_anterior + bl
 
-            # softmax en la última capa para obtener probabilidades
+            # Softmax en la última capa para obtener probabilidades
             if i == self.L:
                 exp_zl = np.exp(zl - np.max(zl, axis=0, keepdims=True))
                 Al = exp_zl / np.sum(exp_zl, axis=0, keepdims=True)
-            # Sigmoidea o tanh para las capas intermedias
+            # Sigmoidea o Tanh para las capas intermedias
             else:
                 if self.__activation == 'sig':
                     Al = 1 / (1 + np.exp(-zl))  # Sigmoidea
                 elif self.__activation == 'tanh':
                     Al = np.tanh(zl)  # Tanh
 
-            # Mete Al en self.__cache con la clave "A{i}"
+            # Guardamos la activación en self.__cache con la clave "A{i}"
             self.__cache[f"A{i}"] = Al
 
-        # Devuelve la última activación y el diccionario cache
         return Al, self.__cache
 
     def cost(self, Y, A):
@@ -176,40 +173,38 @@ class DeepNeuralNetwork:
             intermediary values of the network
         alpha is the learning rate
         """
-        # numero de ejemplos
+        # Numero de ejemplos
         m = Y.shape[1]
 
-        # activación de la última capa
+        # Activación de la última capa
         A = cache['A' + str(self.L)]
 
-        # gradiente de la capa de salida
+        # Gradiente de la capa de salida
         dZ = A - Y
 
-        # recorre de atras hacia adelante
+        # Recorremos de atrás hacia adelante
         for i in range(self.L, 0, -1):
-            # activación de la capa anterior
+            # Activación de la capa anterior
             A_prev = cache['A' + str(i - 1)]
 
-            # pesos de la capa actual
+            # Pesos de la capa actual
             W = self.weights['W' + str(i)]
 
-            # gradiente de los pesos de la capa actual
+            # Gradiente de los pesos de la capa actual
             dW = np.dot(dZ, A_prev.T) / m
 
-            # gradiente de los sesgos de la capa actual
+            # Gradiente de los sesgos de la capa actual
             db = np.sum(dZ, axis=1, keepdims=True) / m
 
-            # gradiente de la capa anterior
-            # Aquí se usa la derivada según la función de activación seleccionada
+            # Gradiente de la capa anterior
             if self.__activation == 'sig':  # Si la activación es sigmoidea
-                dZ = np.dot(W.T, dZ) * (A_prev * (1 - A_prev))  # Derivada de la sigmoidea
+                dZ = np.dot(W.T, dZ) * (A_prev * (1 - A_prev))  # Derivada de sigmoidea
             elif self.__activation == 'tanh':  # Si la activación es tanh
                 dZ = np.dot(W.T, dZ) * (1 - np.tanh(A_prev) ** 2)  # Derivada de tanh
 
-            # actualizamos pesos y sesgos
+            # Actualizamos pesos y sesgos
             self.weights['W' + str(i)] -= alpha * dW
             self.weights['b' + str(i)] -= alpha * db
-
 
     def train(self, X, Y, iterations=5000, alpha=0.05,
               verbose=True, graph=True, step=100):
@@ -250,10 +245,6 @@ class DeepNeuralNetwork:
             raise TypeError("alpha must be a float")
         if alpha <= 0:
             raise ValueError("alpha must be positive")
-        # if not isinstance(step, int):
-        #     raise TypeError("step must be an integer")
-        # if step <= 0 or step > iterations:
-        #     raise ValueError("step must be positive and <= iterations")
 
         iteraciones = []
         costos = []
