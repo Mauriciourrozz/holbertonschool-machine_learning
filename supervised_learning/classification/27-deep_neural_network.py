@@ -95,10 +95,10 @@ class DeepNeuralNetwork:
                 - cache (dict): Dictionary containing all activations:
                     keys "A0", "A1", …, "A{L}" with their corresponding arrays.
         """
-        # Aquí guardo x en el diccionario cache con la clave A0
+        # aqui guardo x en el diccionario cache con la clave A0
         self.__cache["A0"] = X
         for i in range(1, self.L + 1):
-            # Saca de self.__weights la matriz de pesos Wl y
+            # saca de self.__weights la matriz de pesos Wl y
             # el vector de sesgo bl para la capa i
             Wl = self.__weights[f"W{i}"]
             bl = self.__weights[f"b{i}"]
@@ -110,13 +110,13 @@ class DeepNeuralNetwork:
             # Calcula la suma ponderada
             zl = Wl @ a_anterior + bl
 
-            # Aplica la función sigmoidea para obtener la nueva activación Al
-            if i < self.L:  # Para las capas ocultas
-                Al = 1 / (1 + np.exp(-zl))  # Sigmoide
-            else:  # Para la capa de salida, se usa softmax
+            # softmax en la última capa para obtener probabilidades
+            if i == self.L:
                 exp_zl = np.exp(zl - np.max(zl, axis=0, keepdims=True))
-                Al = exp_zl / np.sum(exp_zl, axis=0, keepdims=True)  # Softmax
-
+                Al = exp_zl / np.sum(exp_zl, axis=0, keepdims=True)
+            # Sigmoidea para las capas intermedias
+            else:
+                 Al = 1 / (1 + np.exp(-zl))
             # Mete Al en self.__cache con la clave "A{i}"
             self.__cache[f"A{i}"] = Al
 
@@ -150,12 +150,14 @@ class DeepNeuralNetwork:
         Y (numpy.ndarray): A matrix of shape (1, m)
         containing the true labels for the input data.
         """
-        a, _ = self.forward_prop(X)
+        A, _ = self.forward_prop(X)
 
-        costo = self.cost(Y, a)
+        costo = self.cost(Y, A)
 
-        prediccion = np.argmax(a, axis=0)
-        return prediccion, costo
+        prediccion = np.argmax(A, axis=0)
+        one_hot_prediccion = np.zeros_like(A)
+        one_hot_prediccion[prediccion, np.arange(A.shape[1])] = 1
+        return one_hot_prediccion, costo
 
     def gradient_descent(self, Y, cache, alpha=0.05):
         """
