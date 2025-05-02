@@ -11,15 +11,15 @@ def build_model(nx, layers, activations, lambtha, keep_prob):
 
     # se recorren las capaz intermedias, la primera ya fue creada antes
     # y la ultima se hace despues
-    for i in range(1, len(layers) - 1):
+    for i in range(1, len(layers)):
+        # dropout apaga neuronas al azar antes de seguir para que
+        # la red no se apoye demasiado en ciertas neuronas
+        x = K.layers.Dropout(1 - keep_prob)(x)
 
         # se crea una nueva capa en cada iteracion y se conecta con la anterior
         # que fue x
         x = K.layers.Dense(units=layers[i], activation=activations[i], kernel_regularizer=K.regularizers.l2(lambtha))(x)
 
-        # dropout apaga neuronas al azar antes de seguir para que
-        # la red no se apoye demasiado en ciertas neuronas
-        x = K.layers.Dropout(1 - keep_prob)(x)
 
     # ultima capa, procesa los ultimos valores y se conecta a la
     # ultima capa intermedia
