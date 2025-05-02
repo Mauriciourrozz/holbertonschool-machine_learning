@@ -1,7 +1,29 @@
 #!/usr/bin/env python3
+"""
+0-sequential.py
+"""
 import tensorflow.keras as k
 
+
 def build_model(nx, layers, activations, lambtha, keep_prob):
+    """
+    Builds a neural network model using Keras Sequential API.
+
+    Parameters:
+    nx (int): The number of input features for the model.
+    layers (list): A list containing the number of
+    nodes in each layer.
+    activations (list): A list containing the activation
+    functions for each layer.
+    lambtha (float): The L2 regularization parameter
+    to reduce overfitting.
+    keep_prob (float): The probability of keeping a node during
+    dropout to prevent overfitting.
+
+    Returns:
+    model: A Keras Sequential model with the specified layers,
+    activation functions, and regularization.
+    """
     model = k.Sequential()
 
     # Primera capa
@@ -27,7 +49,6 @@ def build_model(nx, layers, activations, lambtha, keep_prob):
         )
 
         if i != len(layers) - 1:
-                model.add(k.layers.Dropout(1 - keep_prob))
-
+            model.add(k.layers.Dropout(1 - keep_prob))
 
     return model
