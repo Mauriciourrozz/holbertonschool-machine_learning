@@ -55,7 +55,6 @@ def train_model(network, data, labels, batch_size, epochs,
     if save_best and validation_data is not None:
         guardado = K.callbacks.ModelCheckpoint(
             filepath,
-            monitor='val_loss',
             save_best_only=True
         )
         callbacks.append(guardado)
