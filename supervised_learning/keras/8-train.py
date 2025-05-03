@@ -52,7 +52,7 @@ def train_model(network, data, labels, batch_size, epochs,
             verbose=1)
     callbacks.append(decaimiento)
 
-    if save_best and filepath is not None:
+    if save_best and validation_data is not None:
         guardado = K.callbacks.ModelCheckpoint(
             filepath,
             monitor='val_loss',
