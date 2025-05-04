@@ -20,5 +20,5 @@ def test_model(network, data, labels, verbose=True):
     tuple: A tuple containing the loss and accuracy of the model on
     the test data.
     """
-    loss, accuracy = network.evaluate(data, labels, verbose)
+    loss, accuracy = network.evaluate(data, labels, verbose=verbose)
     return [loss, accuracy]
