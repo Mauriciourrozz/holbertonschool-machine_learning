@@ -19,4 +19,3 @@ def normalization_constants(X):
     mean = X.mean(axis=0)
     std = X.std(axis=0)
     return mean, std
-    
