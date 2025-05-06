@@ -2,6 +2,7 @@
 """
 0-norm_constants.py
 """
+import numpy as np
 
 
 def constantes_normalizacion(X):
