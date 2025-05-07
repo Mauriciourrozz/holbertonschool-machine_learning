@@ -16,6 +16,6 @@ def shuffle_data(X, Y):
     Returns:
     tuple: Shuffled versions of X and Y (not necessarily aligned)
     """
-    x = np.random.permutation(X)
-    y = np.random.permutation(Y)
-    return x, y
+    m = X.shape[0]
+    permutation = np.random.permutation(m)
+    return X[permutation], Y[permutation]
