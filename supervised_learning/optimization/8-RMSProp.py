@@ -11,7 +11,8 @@ def create_RMSProp_op(alpha, beta2, epsilon):
 
     Parameters:
     alpha (float): Learning rate.
-    beta2 (float): Decay rate (rho) for the moving average of squared gradients.
+    beta2 (float): Decay rate (rho) for the moving average of
+    squared gradients.
     epsilon (float): Small constant to prevent division by zero.
 
     Returns:
