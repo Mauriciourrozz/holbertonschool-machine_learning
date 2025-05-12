@@ -3,6 +3,7 @@
 14-batch_norm.py
 """
 import tensorflow as tf
+import numpy as np
 
 
 def create_batch_norm_layer(prev, n, activation):
@@ -17,15 +18,15 @@ def create_batch_norm_layer(prev, n, activation):
     Returns:
     tf.Tensor: Activated output of the batch-normalized layer.
     """
-    init = tf.keras.initializers.VarianceScaling(mode='fan_avg')
-    
-    dense = tf.keras.layers.Dense(units=n, kernel_initializer=init)(prev)
-    
-    batch_norm = tf.keras.layers.BatchNormalization(
-        axis=-1,
-        momentum=0.99,
-        epsilon=1e-7,
-        center=True,
-        scale=True
-    )(dense)
-    return activation(batch_norm)
+    layer = tf.keras.layers.Dense(
+            units=n,
+            kernel_initializer=tf.keras.initializers.VarianceScaling(
+                mode='fan_avg'),
+            name="layer")(prev)
+    gamma = tf.Variable(tf.constant(1.0, shape=[n]))
+    beta = tf.Variable(tf.constant(0.0, shape=[n]))
+    mean, variance = tf.nn.moments(layer, axes=[0])
+    bn = tf.nn.batch_normalization(layer, mean=mean, variance=variance,
+                                    offset=beta, scale=gamma,
+                                    variance_epsilon=1e-7)
+    return activation(bn)
