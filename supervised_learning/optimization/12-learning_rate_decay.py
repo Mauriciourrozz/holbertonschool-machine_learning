@@ -21,5 +21,5 @@ def learning_rate_decay(alpha, decay_rate, decay_step):
         initial_learning_rate=alpha,
         decay_steps=decay_step,
         decay_rate=decay_rate,
-        staircase=False  # gradual decay
+        staircase=True
     )
