@@ -20,7 +20,9 @@ def precision(confusion):
     """
     precisiones = np.zeros(confusion.shape[0])
     for i in range(confusion.shape[0]):
+        # asi hayo el verdadero positivo
         vp = confusion[i, i]
+        # y asi el falso positivo
         fp = np.sum(confusion[:, i]) - confusion[i, i]
         precision = vp / (vp + fp)
         precisiones[i] = precision
