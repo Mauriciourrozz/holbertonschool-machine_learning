@@ -12,7 +12,8 @@ def l2_reg_cost(cost, lambtha, weights, L, m):
     Parameters:
     - cost: float, original cost (e.g., cross-entropy).
     - lambtha: float, regularization coefficient.
-    - weights: dict, dictionary with the weights for each layer (W1, b1, W2, b2, ...).
+    - weights: dict, dictionary with the weights for each layer
+    (W1, b1, W2, b2, ...).
     - L: int, number of layers in the network.
     - m: int, number of examples.
 
