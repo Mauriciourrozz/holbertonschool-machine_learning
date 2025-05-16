@@ -26,11 +26,8 @@ def l2_reg_cost(cost, model):
     l2_costos = []
 
     for layer in model.layers:
-        if hasattr(layer, "kernel") and layer.kernel_regularizer is not None:
-            l2_penal = layer.kernel_regularizer(layer.kernel)
-            l2_costos.append(l2_penal)
+        if not isinstance(layer, tf.keras.layers.InputLayer):
+            layer_l2 = tf.reduce_sum(layer.losses) + cost
+            l2_costos.append(layer_l2)
 
-    total_cost = cost + tf.add_n(l2_costos)
-    l2_costos.append(total_cost)
-
-    return l2_costos
+    return tf.convert_to_tensor(l2_costos)
