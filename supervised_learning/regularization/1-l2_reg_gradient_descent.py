@@ -33,22 +33,18 @@ def l2_reg_gradient_descent(Y, weights, cache, alpha, lambtha, L):
         This function updates the weights dictionary **in-place**.
     """
     m = Y.shape[1]
-    dZ = 0
+    grads = {}
+    dZ = cache['A' + str(L)] - Y
+    for i in range(L, 0, -1):
+        grads['dW' + str(i)] = (dZ @ cache['A' + str(i - 1)].T) / \
+            m + (lambtha / m) * weights['W' + str(i)]
+        grads['db' + str(i)] = dZ.sum(axis=1, keepdims=True) / m
+        if i > 1:
+            dA_prev = weights[f"W{i}"].T @ dZ
+            dZ = dA_prev * (1 - cache['A' + str(i - 1)] ** 2)
 
-    for l in reversed(range(1, L + 1)):
-        A_curr = cache['A' + str(l)]
-        A_prev = cache['A' + str(l - 1)]
-        W_curr = weights['W' + str(l)]
-        b_curr = weights['b' + str(l)]
+    for i in range(1, L + 1):
+        weights[f"W{i}"] -= alpha * grads[f"dW{i}"]
+        weights[f"b{i}"] -= alpha * grads[f"db{i}"]
 
-        if l == L:
-            dZ = A_curr - Y
-            dW = (1 / m) * np.dot(dZ, A_prev.T)
-        else:
-            dZ = np.dot(weights['W' + str(l + 1)].T, dZ) * (1 - A_curr ** 2)
-            dW = (1 / m) * np.dot(dZ, A_prev.T) + (lambtha / m) * W_curr
-
-        db = (1 / m) * np.sum(dZ, axis=1, keepdims=True)
-
-        weights['W' + str(l)] -= alpha * dW
-        weights['b' + str(l)] -= alpha * db
+    return weights
