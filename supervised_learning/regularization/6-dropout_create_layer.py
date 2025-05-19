@@ -20,9 +20,10 @@ def dropout_create_layer(prev, n, activation, keep_prob, training=True):
     Returns:
     Tensor with the layer's output after activation and dropout.
     """
-    dense = tf.keras.layers.Dense(units=n, activation=activation)(prev)
+    dense_layer = tf.keras.layers.Dense(units=n, activation=activation)(prev)
+
     if training:
-        dropout = tf.keras.layers.Dropout(rate=1 - keep_prob)(
-            dense, training=True)
-        return dropout
-    return dense
+        dropout_layer = tf.keras.layers.Dropout(rate=1 - keep_prob)
+        return dropout_layer(dense_layer, training=True)
+    else:
+        return dense_layer
