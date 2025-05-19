@@ -20,23 +20,26 @@ def dropout_gradient_descent(Y, weights, cache, alpha, keep_prob, L):
     L: total number of layers.
     """
     m = Y.shape[1]
-    dz = cache[f"A{L}"] - Y
 
-    for i in reversed(range(1, L + 1)):
-        A_prev = cache[f"A{i - 1}"] if i > 1 else cache["A0"]
-        W = weights[f"W{i}"]
-        b = weights[f"b{i}"]
+    A_final = cache['A' + str(L)]
 
-        dW = (1 / m) * np.dot(dz, A_prev.T)
-        db = (1 / m) * np.sum(dz, axis=1, keepdims=True)
+    dZ = A_final - Y
 
-        weights[f"W{i}"] -= alpha * dW
-        weights[f"b{i}"] -= alpha * db
+    for layer in range(L, 0, -1):
+        A_prev = cache['A' + str(layer - 1)]
 
-        if i > 1:
-            da = np.dot(W.T, dz)
-            da *= cache[f"D{i - 1}"]
-            da /= keep_prob
+        dW = np.dot(dZ, A_prev.T) / m
 
-            A_prev = cache[f"A{i - 1}"]
-            dz = da * (1 - A_prev ** 2)
+        db = np.sum(dZ, axis=1, keepdims=True) / m
+
+        weights['W' + str(layer)] = weights['W' + str(layer)] - alpha * dW
+        weights['b' + str(layer)] = weights['b' + str(layer)] - alpha * db
+
+        if layer > 1:
+            dA = np.dot(weights['W' + str(layer)].T, dZ)
+
+            D = cache['D' + str(layer - 1)]
+            dA = dA * D
+            dA = dA / keep_prob
+
+            dZ = dA * (1 - np.power(A_prev, 2))
