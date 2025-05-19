@@ -20,10 +20,15 @@ def dropout_create_layer(prev, n, activation, keep_prob, training=True):
     Returns:
     Tensor with the layer's output after activation and dropout.
     """
-    dense_layer = tf.keras.layers.Dense(units=n, activation=activation)(prev)
+    weight_init = tf.keras.initializers.VarianceScaling(scale=2.0, mode='fan_avg')
 
-    if training:
-        dropout_layer = tf.keras.layers.Dropout(rate=1 - keep_prob)
-        return dropout_layer(dense_layer, training=True)
-    else:
-        return dense_layer
+    dense_layer = tf.keras.layers.Dense(units=n,
+                                        activation=activation,
+                                        kernel_initializer=weight_init)
+
+    dense_output = dense_layer(prev)
+
+    dropout_layer = tf.keras.layers.Dropout(rate=1 - keep_prob)
+    final_output = dropout_layer(dense_output, training=training)
+
+    return final_output
