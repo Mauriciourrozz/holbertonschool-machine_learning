@@ -79,9 +79,9 @@ def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
                     dW[:, :, :, j] += patch * dZ[i, h, w, j]
                     db[:, :, :, j] += dZ[i, h, w, j]
 
-    if padding == "valid":
+    if padding == "smae":
         dA_prev = dA_prev_padded[:, ph:-ph, pw:-pw, :]
-    else:
+    if padding == "valid":
         dA_prev = dA_prev_padded
 
     return dA_prev, dW, db
