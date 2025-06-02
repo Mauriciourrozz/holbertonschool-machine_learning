@@ -2,7 +2,7 @@
 """
 4-lenet5.py
 """
-import tensorflow.keras as K
+from tensorflow import keras as K
 
 
 def lenet5(X):
