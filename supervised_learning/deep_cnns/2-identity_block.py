@@ -38,15 +38,15 @@ def identity_block(A_prev, filters):
     F11, F3, F12 = filters
 
     rama1 = K.layers.Conv2D(F11, (1, 1), padding="same", kernel_initializer=K.initializers.he_normal(seed=0))(A_prev)
-    rama1 = K.layers.BatchNormalization()(rama1)
+    rama1 = K.layers.BatchNormalization(axis=3)(rama1)
     rama1 = K.layers.Activation("relu")(rama1)
 
     rama2 = K.layers.Conv2D(F3, (3, 3), padding="same", kernel_initializer=K.initializers.he_normal(seed=0))(rama1)
-    rama2 = K.layers.BatchNormalization()(rama2)
+    rama2 = K.layers.BatchNormalization(axis=3)(rama2)
     rama2 = K.layers.Activation("relu")(rama2)
 
     rama3 = K.layers.Conv2D(F12, (1, 1), padding="same", kernel_initializer=K.initializers.he_normal(seed=0))(rama2)
-    rama3 = K.layers.BatchNormalization()(rama3)
+    rama3 = K.layers.BatchNormalization(axis=3)(rama3)
 
     output = K.layers.add([A_prev, rama3])
     output = K.layers.Activation("relu")(output)
