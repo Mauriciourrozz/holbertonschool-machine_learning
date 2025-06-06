@@ -57,7 +57,7 @@ def projection_block(A_prev, filters, s=2):
 
     x = K.layers.Conv2D(
         F12, (1, 1), strides=s, padding="same",
-        kernel_initializer=initializer)
+        kernel_initializer=initializer)(A_prev)
     x = K.layers.BatchNormalization(axis=3)(x)
 
     output = K.layers.add([branch3, x])
