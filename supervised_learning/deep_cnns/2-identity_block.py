@@ -22,9 +22,9 @@ def identity_block(A_prev, filters):
 
     Description:
     The identity block consists of three convolutional layers:
-    1. A 1x1 convolution reducing dimensionality.
-    2. A 3x3 convolution processing spatial features.
-    3. A 1x1 convolution restoring dimensionality.
+    1- A 1x1 convolution reducing dimensionality.
+    2- A 3x3 convolution processing spatial features.
+    3- A 1x1 convolution restoring dimensionality.
 
     Batch normalization and ReLU activation are applied after the first two
     convolutions, and batch normalization is applied after the third
