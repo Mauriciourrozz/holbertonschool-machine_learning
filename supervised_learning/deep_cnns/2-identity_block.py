@@ -3,8 +3,6 @@
 2-identity_block.py
 """
 
-from tensorflow import keras as K
-
 
 def identity_block(A_prev, filters):
     """
