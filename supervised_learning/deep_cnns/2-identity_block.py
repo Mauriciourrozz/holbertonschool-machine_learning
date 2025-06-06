@@ -48,7 +48,7 @@ def identity_block(A_prev, filters):
     rama3 = K.layers.Conv2D(F12, (1, 1), padding="same", kernel_initializer=K.initializers.he_normal(seed=0))(rama2)
     rama3 = K.layers.BatchNormalization(axis=3)(rama3)
 
-    output = K.layers.add([A_prev, rama3])
+    output = K.layers.add([rama3, A_prev])
     output = K.layers.Activation("relu")(output)
 
     return output
