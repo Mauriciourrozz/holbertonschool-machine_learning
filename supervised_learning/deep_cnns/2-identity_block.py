@@ -10,7 +10,7 @@ def identity_block(A_prev, filters):
     Builds an identity block as described in the Deep Residual Learning paper
 
     Parameters:
-    - A_prev: tensor, output from the previous layer
+    - A_prev: tensor, output the previous layer
     - filters: tuple/list of three integers (F11, F3, F12)
         * F11: number of filters in the first 1x1 convolution
         * F3: number of filters in the 3x3 convolution
