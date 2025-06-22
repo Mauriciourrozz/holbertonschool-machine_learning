@@ -48,7 +48,6 @@ class Yolo:
         self.nms_t = nms_t
         self.anchors = anchors
 
-
     def sigmoid(self, x):
         """
         Sigmoid function to normalize values ​​between 0 and 1
@@ -73,8 +72,11 @@ class Yolo:
             # Separamos los datos del output
             t_xy = self.sigmoid(output[..., 0:2])  # tx, ty
             t_wh = output[..., 2:4]  # tw, th
-            objectness = self.sigmoid(output[..., 4:5]) # confianza de que hay un objeto
-            class_probs = self.sigmoid(output[..., 5:]) # probabilidades por clase
+
+            # confianza de que hay un objeto
+            objectness = self.sigmoid(output[..., 4:5])
+            # probabilidades por clase
+            class_probs = self.sigmoid(output[..., 5:])
 
             # Creamos coordenadas (cx, cy) de la grilla
             grid_x = np.arange(grid_w)
