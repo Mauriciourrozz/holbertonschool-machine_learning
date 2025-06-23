@@ -168,28 +168,25 @@ class Yolo:
         box_classes = []
         box_scores = []
 
-        # Recorremos cada salida del modelo
+        # Recorremos cada salida del modelo (cada escala)
         for box, confidence, class_prob in zip(boxes, box_confidences,
                                                box_class_probs):
-            # Calculamos la puntuación combinada:
-            # confianza * probabilidad de clase
+            # Calculamos: confianza * probabilidad por clase
             b_score = confidence * class_prob
-            # Obtenemos la puntuación máxima para cada caja (la mejor clase)
+
+            # Obtenemos la puntuación máxima y la clase
+            # correspondiente para cada caja
             b_class_score = np.max(b_score, axis=-1)
-            # Busca el índice de la clase con mayor probabilidad para cada caja
             box_class_indices = np.argmax(b_score, axis=-1)
 
-            # Obtenemos el índice (número) de la clase con mayor puntuación
-            filtered_boxes.append(box.reshape(-1, 4))
-            # Guardamos las cajas que pasan el filtro
-            box_classes.append(box_class_indices.reshape(-1))
-            # Guardamos las puntuaciones de las cajas filtradas
-            box_scores.append(b_class_score)
+            # Aplanamos las cajas,clases y scores para poder unir todo al final
+            filtered_boxes.append(box.reshape(-1, 4))  # cajas en (N, 4)
+            box_classes.append(box_class_indices.reshape(-1))  # clases en (N,)
+            box_scores.append(b_class_score.reshape(-1))  # scores en (N,)
 
-        # Concatenamos todas las cajas, clases y puntuaciones de
-        # todas las salidas en arrays únicos
+        # Concatenamos todo en arrays finales
         filtered_boxes = np.concatenate(filtered_boxes, axis=0)
-        box_clases = np.concatenate(box_clases, axis=0)
+        box_classes = np.concatenate(box_classes, axis=0)
         box_scores = np.concatenate(box_scores, axis=0)
 
-        return filtered_boxes, box_clases, box_scores
+        return filtered_boxes, box_classes, box_scores
