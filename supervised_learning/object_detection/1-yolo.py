@@ -50,19 +50,19 @@ class Yolo:
 
     def process_outputs(self, outputs, image_size):
         """
-        Procesa las salidas del modelo YOLO para obtener:
-        - bounding boxes ajustadas al tamaño de la imagen,
-        - confianzas de objeto por celda,
-        - probabilidades por clase.
+        Process the outputs of the YOLO model to obtain:
+        - bounding boxes adjusted to the image size,
+        - object trusts per cell,
+        - probabilities per class.
 
-        Parámetros:
-        - outputs: lista de arrays de salida del modelo YOLO.
-        - image_size: tupla (altura, ancho) de la imagen original.
+        Parameters:
+        - outputs: list of output arrays of the YOLO model.
+        - image_size: tuple (height, width) of the original image.
 
-        Devuelve:
-        - boxes: lista de arrays con las cajas transformadas por escala.
-        - box_confidences: lista de arrays con las confianzas.
-        - box_class_probs: lista de arrays con las probabilidades por clase.
+        Returns:
+        - boxes: list of arrays with the boxes transformed by scale.
+        - box_confidences: list of arrays with the trusts.
+        - box_class_probs: list of arrays with the probabilities per class.
         """
         boxes = []
         box_confidences = []
