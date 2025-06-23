@@ -165,10 +165,8 @@ class Yolo:
         """
 
         filtered_boxes = []
-        box_clases = []
+        box_classes = []
         box_scores = []
-        # Definimos un umbral para filtrar cajas con baja puntuación
-        umbral = 0.7
 
         # Recorremos cada salida del modelo
         for box, confidence, class_prob in zip(boxes, box_confidences,
@@ -176,24 +174,22 @@ class Yolo:
             # Calculamos la puntuación combinada:
             # confianza * probabilidad de clase
             b_score = confidence * class_prob
-
             # Obtenemos la puntuación máxima para cada caja (la mejor clase)
             b_class_score = np.max(b_score, axis=-1)
-
-            # Obtenemos el índice (número) de la clase con mayor puntuación
+            # Busca el índice de la clase con mayor probabilidad para cada caja
             box_class_indices = np.argmax(b_score, axis=-1)
 
-            # Creamos una máscara para filtrar cajas que superen el umbral
-            mask = b_class_score > umbral
+            # Obtenemos el índice (número) de la clase con mayor puntuación
+            filtered_boxes.append(box.reshape(-1, 4))
 
             # Guardamos las cajas que pasan el filtro
-            filtered_boxes.append(box[mask])
+            box_classes.append(box_class_indices.reshape(-1))
 
             # Guardamos las clases de las cajas filtradas
-            box_clases.append(box_class_indices[mask])
+            box_clases.append(box_class_indices)
 
             # Guardamos las puntuaciones de las cajas filtradas
-            box_scores.append(b_class_score[mask])
+            box_scores.append(b_class_score)
 
         # Concatenamos todas las cajas, clases y puntuaciones de
         # todas las salidas en arrays únicos
