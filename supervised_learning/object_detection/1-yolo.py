@@ -51,74 +51,80 @@ class Yolo:
 
     def process_outputs(self, outputs, image_size):
         """
-        Processes the outputs of the YOLO model.
-        - outputs: list of prediction arrays (one per scale)
-        - image_size: actual image size (height, width)
-        Returns: processed boxes, confidences, and class probabilities.
+        Procesa las salidas del modelo YOLO para obtener:
+        - bounding boxes ajustadas al tamaño de la imagen,
+        - confianzas de objeto por celda,
+        - probabilidades por clase.
+
+        Parámetros:
+        - outputs: lista de arrays de salida del modelo YOLO.
+        - image_size: tupla (altura, ancho) de la imagen original.
+
+        Devuelve:
+        - boxes: lista de arrays con las cajas transformadas por escala.
+        - box_confidences: lista de arrays con las confianzas.
+        - box_class_probs: lista de arrays con las probabilidades por clase.
         """
+        boxes = []
+        box_confidences = []
+        box_class_probs = []
+
         image_h, image_w = image_size
 
-        # Inicializamos las listas que vamos a devolver
-        boxes = []                # Lista de cajas (x1, y1, x2, y2) por cada salida
-        box_confidences = []      # Lista de confianzas por cada salida
-        box_class_probs = []      # Lista de probabilidades por clase por cada salida
-
-        # Extraemos el alto y ancho reales de la imagen original
-        ih, iw = image_size
-
-        # Recorremos cada una de las salidas del modelo YOLO
         for i, output in enumerate(outputs):
-            # Obtenemos dimensiones de esta salida: alto, ancho de la grilla, cantidad de anchors
-            gh, gw, anchorBoxes, _ = output.shape
+            grid_h, grid_w, anchor_boxes, _ = output.shape
 
-            # Creamos una matriz vacía para guardar las coordenadas finales de las cajas
-            box = np.zeros(output[:, :, :, :4].shape)
+            # Preparamos el array donde se guardarán las bounding boxes
+            box = np.zeros_like(output[:, :, :, :4])
 
-            # Extraemos las predicciones del modelo para tx, ty, tw, th
+            # Extraemos las predicciones crudas del modelo
             tx = output[:, :, :, 0]
             ty = output[:, :, :, 1]
             tw = output[:, :, :, 2]
             th = output[:, :, :, 3]
 
-            # Obtenemos los tamaños de las cajas ancla (anchor boxes) correspondientes a esta salida
-            pwTotal = self.anchors[:, :, 0]  # anchos de anchors
-            phTotal = self.anchors[:, :, 1]  # altos de anchors
+            # Creamos las grillas de coordenadas (meshgrid)
+            grid_x = np.arange(grid_w)
+            grid_y = np.arange(grid_h)
+            grid_x, grid_y = np.meshgrid(grid_x, grid_y)
 
-            # Adaptamos los anchors para que coincidan con el tamaño de la grilla
-            pw = np.tile(pwTotal[i], gw).reshape(gw, 1, len(pwTotal[i]))
-            ph = np.tile(phTotal[i], gh).reshape(gh, 1, len(phTotal[i]))
+            # Les damos forma para que puedan sumarse a tx y ty
+            grid_x = grid_x[:, :, np.newaxis]  # (grid_h, grid_w, 1)
+            grid_y = grid_y[:, :, np.newaxis]  # (grid_h, grid_w, 1)
 
-            # Creamos las coordenadas de la grilla (cx, cy) para posicionar las cajas
-            cx = np.tile(np.arange(gw), gh).reshape(gw, gw, 1)  # coordenada x por celda
-            cy = np.tile(np.arange(gw), gh).reshape(gh, gh).T.reshape(gh, gh, 1)  # coordenada y por celda
+            # Obtenemos los anchors correspondientes a esta escala
+            anchor_w = self.anchors[i, :, 0].reshape((1, 1, anchor_boxes))
+            anchor_h = self.anchors[i, :, 1].reshape((1, 1, anchor_boxes))
 
-            # Calculamos el centro de cada caja (normalizado entre 0 y 1)
-            bx = (1 / (1 + np.exp(-tx)) + cx) / gw
-            by = (1 / (1 + np.exp(-ty)) + cy) / gh
+            # Input size del modelo
+            input_shape = self.model.input.shape.as_list()
+            input_h = input_shape[1]
+            input_w = input_shape[2]
 
-            # Calculamos el ancho y alto de cada caja (normalizado)
-            bw = (np.exp(tw) * pw) / self.model.input.shape[1]
-            bh = (np.exp(th) * ph) / self.model.input.shape[2]
+            # Calculamos las coordenadas normalizadas de los centros
+            bx = (1 / (1 + np.exp(-tx)) + grid_x) / grid_w
+            by = (1 / (1 + np.exp(-ty)) + grid_y) / grid_h
 
-            # Convertimos de centro (bx, by) y tamaño (bw, bh) a (x1, y1, x2, y2)
-            # Y lo escalamos al tamaño real de la imagen
-            box[:, :, :, 0] = (bx - (bw / 2)) * iw  # x1
-            box[:, :, :, 1] = (by - (bh / 2)) * ih  # y1
-            box[:, :, :, 2] = (bx + (bw / 2)) * iw  # x2
-            box[:, :, :, 3] = (by + (bh / 2)) * ih  # y2
+            # Calculamos el ancho y alto normalizados de las cajas
+            bw = (np.exp(tw) * anchor_w) / input_w
+            bh = (np.exp(th) * anchor_h) / input_h
 
-            # Guardamos las cajas ya procesadas
+            # Convertimos de centro-ancho-alto a (x1, y1, x2, y2)
+            box[:, :, :, 0] = (bx - bw / 2) * image_w  # x1
+            box[:, :, :, 1] = (by - bh / 2) * image_h  # y1
+            box[:, :, :, 2] = (bx + bw / 2) * image_w  # x2
+            box[:, :, :, 3] = (by + bh / 2) * image_h  # y2
+
+            # Agregamos la caja a la lista
             boxes.append(box)
 
-            # Calculamos la confianza de que haya un objeto (sigmoid del canal 4)
-            temp = output[:, :, :, 4]
-            sigmoid = (1 / (1 + np.exp(-temp)))
-            box_confidences.append(sigmoid.reshape(gh, gw, anchorBoxes, 1))
+            # Calculamos la confianza de objeto con sigmoid
+            confidence = 1 / (1 + np.exp(-output[:, :, :, 4]))
+            box_confidences.append(
+                confidence.reshape((grid_h, grid_w, anchor_boxes, 1)))
 
-            # Calculamos las probabilidades de clase (sigmoid del resto)
-            temp = output[:, :, :, 5:]
-            box_class_probs.append((1 / (1 + np.exp(-temp))))
+            # Calculamos la probabilidad por clase también con sigmoid
+            class_probs = 1 / (1 + np.exp(-output[:, :, :, 5:]))
+            box_class_probs.append(class_probs)
 
-        # Devolvemos las listas con todas las salidas procesadas
         return boxes, box_confidences, box_class_probs
-
