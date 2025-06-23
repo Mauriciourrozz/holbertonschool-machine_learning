@@ -289,7 +289,7 @@ class Yolo:
         images = []
         imagesPath = []
 
-        for imagen in os.listdir(folder_path):
+        for imagen in sorted(os.listdir(folder_path)):
             path = os.path.join(folder_path, imagen)
             image = cv2.imread(path)
 
