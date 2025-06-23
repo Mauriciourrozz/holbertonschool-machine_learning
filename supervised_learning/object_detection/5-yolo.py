@@ -321,11 +321,10 @@ class Yolo:
 
         input_h = self.model.input.shape[1]
         input_w = self.model.input.shape[2]
-        interpolation = cv2.INTER_CUBIC
 
         for i in images:
             resize = cv2.resize(i, (input_w, input_h),
-                                interpolation=interpolation)
+                                interpolation=cv2.INTER_CUBIC)
             normalization = resize / 255.0
 
             image_shape.append(i.shape[:2])
