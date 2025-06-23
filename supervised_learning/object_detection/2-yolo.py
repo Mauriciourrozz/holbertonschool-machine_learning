@@ -181,13 +181,8 @@ class Yolo:
 
             # Obtenemos el índice (número) de la clase con mayor puntuación
             filtered_boxes.append(box.reshape(-1, 4))
-
             # Guardamos las cajas que pasan el filtro
             box_classes.append(box_class_indices.reshape(-1))
-
-            # Guardamos las clases de las cajas filtradas
-            box_clases.append(box_class_indices)
-
             # Guardamos las puntuaciones de las cajas filtradas
             box_scores.append(b_class_score)
 
