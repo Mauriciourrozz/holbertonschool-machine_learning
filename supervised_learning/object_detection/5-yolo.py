@@ -317,7 +317,7 @@ class Yolo:
         for each image in the input list.
         """
         pimages = []
-        image_shape = []
+        image_shapes = []
 
         input_h = self.model.input.shape[1]
         input_w = self.model.input.shape[2]
@@ -327,7 +327,7 @@ class Yolo:
                                 interpolation=cv2.INTER_CUBIC)
             normalization = resize / 255.0
 
-            image_shape.append(i.shape[:2])
+            image_shapes.append(i.shape[:2])
             pimages.append(normalization)
-
-        return np.array(pimages), np.array(image_shape)
+        
+        return np.array(pimages, dtype=np.float32), np.array(images_shape)
