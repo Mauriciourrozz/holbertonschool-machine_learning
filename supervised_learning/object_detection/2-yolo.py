@@ -168,7 +168,7 @@ class Yolo:
         box_clases = []
         box_scores = []
         # Definimos un umbral para filtrar cajas con baja puntuación
-        umbral = 0.5
+        umbral = 0.6
 
         # Recorremos cada salida del modelo
         for box, confidence, class_prob in zip(boxes, box_confidences,
