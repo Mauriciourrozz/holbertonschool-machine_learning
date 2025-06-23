@@ -239,7 +239,7 @@ class Yolo:
                 cls_boxes = rest_boxes[keep_indices]
                 cls_scores = cls_scores[1:][keep_indices]
 
-            selected_classes = np.full(selected_boxes, cls)
+            selected_classes = np.full(len(selected_boxes), cls)
 
             box_predictions.append(np.array(selected_boxes))
             predicted_box_classes.append(selected_classes)
