@@ -330,4 +330,4 @@ class Yolo:
             image_shapes.append(i.shape[:2])
             pimages.append(normalization)
         
-        return np.array(pimages, dtype=np.float32), np.array(images_shape)
+        return np.array(pimages, dtype=np.float32), np.array(image_shapes)
