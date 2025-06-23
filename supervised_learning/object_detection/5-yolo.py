@@ -326,7 +326,7 @@ class Yolo:
         for i in images:
             resize = cv2.resize(i, (input_w, input_h),
                                 interpolation=interpolation)
-            normalization = resize / 255
+            normalization = resize / 255.0
 
             image_shape.append(i.shape[:2])
             pimages.append(normalization)
