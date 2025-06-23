@@ -179,10 +179,13 @@ class Yolo:
             b_class_score = np.max(b_score, axis=-1)
             box_class_indices = np.argmax(b_score, axis=-1)
 
+            # Aplicamos el filtro usando el umbral
+            mask = b_class_score >= self.class_t
+
             # Aplanamos las cajas,clases y scores para poder unir todo al final
-            filtered_boxes.append(box.reshape(-1, 4))  # cajas en (N, 4)
-            box_classes.append(box_class_indices.reshape(-1))  # clases en (N,)
-            box_scores.append(b_class_score.reshape(-1))  # scores en (N,)
+            filtered_boxes.append(box[mask])
+            box_classes.append(box_class_indices[mask])
+            box_scores.append(b_class_score[mask])
 
         # Concatenamos todo en arrays finales
         filtered_boxes = np.concatenate(filtered_boxes, axis=0)
