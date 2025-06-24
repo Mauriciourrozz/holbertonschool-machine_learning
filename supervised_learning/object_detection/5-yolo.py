@@ -324,7 +324,7 @@ class Yolo:
 
         for img in images:
             h, w = img.shape[:2]
-            image_shapes.append([h, w])
+            image_shapes.append((h, w))
 
             img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
