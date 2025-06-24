@@ -316,8 +316,8 @@ class Yolo:
             format (height, width)
         for each image in the input list.
         """
-        input_h = self.model.input.shape[1]
-        input_w = self.model.input.shape[2]
+        input_h = self.model.input.shape[0]
+        input_w = self.model.input.shape[1]
 
         pimages = []
         image_shapes = []
