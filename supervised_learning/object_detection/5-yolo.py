@@ -316,18 +316,24 @@ class Yolo:
             format (height, width)
         for each image in the input list.
         """
-        pimages = []
-        image_shapes = []
-
         input_h = self.model.input.shape[1]
         input_w = self.model.input.shape[2]
 
-        for i in images:
-            image_shapes.append(i.shape[:2])
-            resize = cv2.resize(i, (input_w, input_h), interpolation=cv2.INTER_CUBIC)
-            norm = resize.astype(np.float32) / 255.0
+        pimages = []
+        image_shapes = []
 
-            pimages.append(norm.astype(np.float32))
-        
-        return np.array(pimages, dtype=np.float32), np.array(image_shapes)
+        for img in images:
+            h, w = img.shape[:2]
+            image_shapes.append((h, w))
+
+            resized = cv2.resize(img, (input_w, input_h), interpolation=cv2.INTER_CUBIC)
+
+            scaled = resized / 255.0
+
+            pimages.append(scaled)
+
+        pimages = np.array(pimages)
+        image_shapes = np.array(image_shapes)
+
+        return pimages, image_shapes
 
