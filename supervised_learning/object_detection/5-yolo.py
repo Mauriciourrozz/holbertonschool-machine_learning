@@ -323,10 +323,11 @@ class Yolo:
         input_w = self.model.input.shape[2]
 
         for i in images:
+            image_shapes.append(i.shape[:2])
+            i = i / 255.0
             resize = cv2.resize(i, (input_w, input_h),
                                 interpolation=cv2.INTER_CUBIC)
 
-            image_shapes.append(i.shape[:2])
-            pimages.append(resize / 255.0)
+            pimages.append(resize)
         
         return np.array(pimages, dtype=np.float32), np.array(image_shapes)
