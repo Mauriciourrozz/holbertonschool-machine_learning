@@ -323,18 +323,14 @@ class Yolo:
         image_shapes = []
 
         for img in images:
-            h, w = img.shape[:2]
-            image_shapes.append((h, w))
-
             img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            
+            h, w = img.shape[:2]
+            image_shapes.append([h, w])
 
-            resized = cv2.resize(img_rgb, (input_w, input_h),
-                                 interpolation=cv2.INTER_CUBIC)
+            resized = cv2.resize(img_rgb, (input_w, input_h), interpolation=cv2.INTER_CUBIC)
 
             scaled = resized.astype(np.float32) / 255.0
             pimages.append(scaled)
 
-        pimages = np.array(pimages, dtype=np.float32)
-        image_shapes = np.array(image_shapes, dtype=np.float32)
-
-        return pimages, image_shapes
+        return np.array(pimages, dtype=np.float32), np.array(image_shapes, dtype=np.float32)
