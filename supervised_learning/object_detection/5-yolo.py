@@ -318,17 +318,23 @@ class Yolo:
         """
         input_h = self.model.input.shape[1]
         input_w = self.model.input.shape[2]
-        
+
         pimages = []
         image_shapes = []
-        
+
         for img in images:
             h, w = img.shape[:2]
-            image_shapes.append([h, w])
-            
-            resized = cv2.resize(img, (input_w, input_h), interpolation=cv2.INTER_CUBIC)
-            
-            normalized = resized.astype(np.float32) / 255.0
-            pimages.append(normalized)
-        
-        return np.array(pimages, dtype=np.float32), np.array(image_shapes, dtype=np.float32)
+
+            image_shapes.append((h, w))
+
+            resized = cv2.resize(img, (input_w, input_h),
+                                 interpolation=cv2.INTER_CUBIC)
+
+            scaled = resized / 255.0
+
+            pimages.append(scaled)
+
+        pimages = np.array(pimages, dtype=np.float32)
+        image_shapes = np.array(image_shapes)
+
+        return pimages, image_shapes
