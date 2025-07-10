@@ -61,7 +61,7 @@ class Poisson:
         exponente = -self.lambtha
         resultado = 1.0
         termino = 1.0
-        for i in range(1, 30):
+        for i in range(1, 21):
             termino *= exponente / i
             resultado += termino
 
