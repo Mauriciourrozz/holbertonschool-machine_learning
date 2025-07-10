@@ -3,19 +3,22 @@
 poisson.py
 """
 
+
 class Poisson:
     """
     Represents a Poisson distribution.
 
     Attributes:
-        lambtha (float): The expected number of occurrences in a given interval (λ).
+        lambtha (float): The expected number of
+        occurrences in a given interval (λ).
     """
     def __init__(self, data=None, lambtha=1.):
         """
         Initialize the Poisson distribution instance.
 
         Parameters:
-            data (list, optional): A list of data points to estimate the distribution's λ.
+            data (list, optional): A list of data points
+            to estimate the distribution's λ.
                                    If None, lambtha is used directly.
             lambtha (float, optional): The expected number of occurrences (λ).
                                        Default is 1.0.
