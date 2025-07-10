@@ -2,6 +2,7 @@
 """
 poisson.py
 """
+import math
 
 
 class Poisson:
@@ -41,3 +42,18 @@ class Poisson:
                 raise ValueError("data must contain multiple values")
             # lambtha se calcula como el promedio de los datos
             self.lambtha = float(sum(data) / len(data))
+
+    def pmf(self, k):
+        """
+        Calculates the value of the PMF for a given number of "successes" k.
+
+        Parameters:
+            k (int or float): The number of events ("successes").
+
+        Returns:
+            float: The probability of exactly k events occurring.
+        """
+        k = int(k)
+        if k < 0:
+            return 0
+        return (math.exp(-self.lambtha) * (self.lambtha ** k)) / math.factorial(k)
