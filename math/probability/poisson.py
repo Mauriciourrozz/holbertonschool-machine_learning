@@ -42,27 +42,6 @@ class Poisson:
             # lambtha se calcula como el promedio de los datos
             self.lambtha = float(sum(data) / len(data))
 
-    def factorial(self, n):
-        """
-        Calculate the factorial of a non-negative integer n.
-        """
-        if n == 0 or n == 1:
-            return 1
-        result = 1
-        for i in range(2, n + 1):
-            result *= i
-        return result
-
-    def exp(self, x):
-        """
-        Approximate the exponential of x (e^x) using a Taylor series expansion.
-        """
-        sum = 1.0
-        term = 1.0
-        for i in range(1, 21):
-            term *= x / i
-            sum += term
-        return sum
 
     def pmf(self, k):
         """
@@ -73,8 +52,23 @@ class Poisson:
 
         Returns:
             float: The probability of exactly k events occurring.
+
         """
         k = int(k)
         if k < 0:
             return 0
-        return (self.exp(-self.lambtha) * (self.lambtha ** k)) / self.factorial(k)
+
+        exponente = -self.lambtha
+        resultado = 1.0
+        termino = 1.0
+        for i in range(1, 20):
+            termino *= exponente / i
+            resultado += termino
+
+        fact = 1
+        for i in range(2, k + 1):
+            fact *= i
+
+        pmf_value = (resultado * (self.lambtha ** k)) / fact
+
+        return pmf_value
