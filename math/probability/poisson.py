@@ -42,7 +42,6 @@ class Poisson:
             # lambtha se calcula como el promedio de los datos
             self.lambtha = float(sum(data) / len(data))
 
-
     def pmf(self, k):
         """
         Calculates the value of the PMF for a given number of "successes" k.
@@ -58,17 +57,19 @@ class Poisson:
         if k < 0:
             return 0
 
-        exponente = -self.lambtha
-        resultado = 1.0
-        termino = 1.0
-        for i in range(1, 21):
-            termino *= exponente / i
-            resultado += termino
+        e = 2.7182818285
+        numerador = (e ** -self.lambtha) * (self.lambtha ** k)
+        denominador = self.factorial(k)
 
-        fact = 1
-        for i in range(2, k + 1):
-            fact *= i
+        return numerador / denominador
 
-        pmf_value = (resultado * (self.lambtha ** k)) / fact
-
-        return pmf_value
+    def factorial(self, n):
+        """
+        Calculate the factorial of a non-negative integer n.
+        """
+        if n == 0 or n == 1:
+            return 1
+        result = 1
+        for i in range(2, n + 1):
+            result *= i
+        return result
