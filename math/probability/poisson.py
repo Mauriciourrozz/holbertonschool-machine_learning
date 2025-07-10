@@ -2,7 +2,6 @@
 """
 poisson.py
 """
-import math
 
 
 class Poisson:
