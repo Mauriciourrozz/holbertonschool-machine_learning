@@ -59,7 +59,7 @@ class Poisson:
         """
         sum = 1.0
         term = 1.0
-        for i in range(1, 11):
+        for i in range(1, 21):
             term *= x / i
             sum += term
         return sum
