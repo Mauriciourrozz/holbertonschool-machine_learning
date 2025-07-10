@@ -42,7 +42,7 @@ class Poisson:
             # lambtha se calcula como el promedio de los datos
             self.lambtha = float(sum(data) / len(data))
 
-    def factorial(n):
+    def factorial(self, n):
         """
         Calculate the factorial of a non-negative integer n.
         """
@@ -53,7 +53,7 @@ class Poisson:
             result *= i
         return result
 
-    def exp(x):
+    def exp(self, x):
         """
         Approximate the exponential of x (e^x) using a Taylor series expansion.
         """
