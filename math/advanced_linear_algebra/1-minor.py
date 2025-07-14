@@ -74,17 +74,13 @@ def minor(matrix):
     Returns:
     list of lists: Matrix of minors.
     """
-    # si es una lista vacia dentro de una lista el determinante es 1
-    if matrix == [[]]:
-        return [[1]]
-
-    # compruebo que matrix sea una lista de listas
-    if not isinstance(matrix, list) or not all(isinstance(
-            i, list) for i in matrix) or matrix == []:
+    if not matrix:
         raise TypeError("matrix must be a list of lists")
-
-    # compruebo que sea una matrix cuadrada
-    if not all(len(fila) == len(matrix) for fila in matrix):
+    if not all(isinstance(row, list) for row in matrix):
+        raise TypeError("matrix must be a list of lists")
+    if not matrix or matrix == [] or matrix == [[]] or len(matrix) == 0:
+        raise ValueError("matrix must be a non-empty square matrix")
+    if not all(len(row) == len(matrix) for row in matrix):
         raise ValueError("matrix must be a non-empty square matrix")
 
     n = len(matrix)
