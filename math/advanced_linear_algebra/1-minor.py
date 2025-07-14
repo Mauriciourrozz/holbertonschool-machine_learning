@@ -85,7 +85,7 @@ def minor(matrix):
 
     # compruebo que sea una matrix cuadrada
     if not all(len(fila) == len(matrix) for fila in matrix):
-        raise ValueError("matrix must be a square matrix")
+        raise ValueError("matrix must be a non-empty square matrix")
 
     n = len(matrix)
     menores = []
