@@ -77,13 +77,13 @@ def minor(matrix):
     if not matrix:
         raise TypeError("matrix must be a list of lists")
 
-    if not all(isinstance(row, list) for row in matrix):
+    if not all(isinstance(fila, list) for fila in matrix):
         raise TypeError("matrix must be a list of lists")
 
     if not matrix or matrix == [] or matrix == [[]] or len(matrix) == 0:
         raise ValueError("matrix must be a non-empty square matrix")
 
-    if not all(len(row) == len(matrix) for row in matrix):
+    if not all(len(fila) == len(matrix) for fila in matrix):
         raise ValueError("matrix must be a non-empty square matrix")
 
     n = len(matrix)
