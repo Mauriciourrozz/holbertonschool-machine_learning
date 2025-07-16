@@ -143,10 +143,10 @@ def cofactor(matrix):
     return cof_matrix
 
 
-
 def inverse(matrix):
     """
-    Calculates the inverse of a square matrix using its adjugate and determinant.
+    Calculates the inverse of a square matrix using its adjugate and
+    determinant.
 
     Args:
         matrix (list of lists): A non-empty square matrix.
@@ -156,9 +156,11 @@ def inverse(matrix):
         ValueError: If `matrix` is not a non-empty square matrix.
 
     Returns:
-        list of lists: The inverse of the input matrix, or None if the matrix is singular.
+        list of lists: The inverse of the input matrix, or None if the matrix
+        is singular.
     """
-    if not isinstance(matrix, list) or not all(isinstance(row, list) for row in matrix):
+    if not isinstance(matrix, list) or not all(
+            isinstance(row, list) for row in matrix):
         raise TypeError("matrix must be a list of lists")
 
     if matrix == [] or matrix == [[]]:
