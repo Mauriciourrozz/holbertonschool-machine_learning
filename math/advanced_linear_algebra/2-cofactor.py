@@ -77,8 +77,11 @@ def cofactor(matrix):
             isinstance(fila, list) for fila in matrix):
         raise TypeError("matrix must be a list of lists")
 
-    if matrix == [] or matrix == [[]]:
+    if matrix == []:
         raise TypeError("matrix must be a list of lists")
+
+    if matrix == [[]]:
+        raise ValueError("matrix must be a non-empty square matrix")
 
     if any(len(fila) != len(matrix) for fila in matrix):
         raise ValueError("matrix must be a non-empty square matrix")
