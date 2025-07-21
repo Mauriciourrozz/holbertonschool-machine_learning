@@ -30,6 +30,7 @@ def likelihood(x, n, P):
 
     return binom_coeff * (P ** x) * ((1 - P) ** (n - x))
 
+
 def intersection(x, n, P, Pr):
     """
     Calculates the intersection between the observed data and the probabilities
@@ -49,7 +50,8 @@ def intersection(x, n, P, Pr):
 
     for name, arr in [("P", P), ("Pr", Pr)]:
         if np.any(arr < 0) or np.any(arr > 1):
-            raise ValueError(f"All values in {name} must be in the range [0, 1]")
+            raise ValueError(
+                f"All values in {name} must be in the range [0, 1]")
     if not np.isclose(np.sum(Pr), 1):
         raise ValueError("Pr must sum to 1")
 
