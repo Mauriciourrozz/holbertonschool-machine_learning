@@ -58,6 +58,4 @@ def intersection(x, n, P, Pr):
     binom_coeff = np.math.factorial(n) / (
         np.math.factorial(x) * np.math.factorial(n - x))
 
-    likelihood = binom_coeff * (P ** x) * ((1 - P) ** (n - x))
-
-    return likelihood * Pr
+    return likelihood(x, n, P) * Pr
