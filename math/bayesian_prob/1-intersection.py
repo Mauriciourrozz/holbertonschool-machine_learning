@@ -55,7 +55,4 @@ def intersection(x, n, P, Pr):
     if not np.isclose(np.sum(Pr), 1):
         raise ValueError("Pr must sum to 1")
 
-    binom_coeff = np.math.factorial(n) / (
-        np.math.factorial(x) * np.math.factorial(n - x))
-
     return likelihood(x, n, P) * Pr
