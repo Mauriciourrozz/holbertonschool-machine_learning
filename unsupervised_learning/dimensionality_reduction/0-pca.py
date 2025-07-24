@@ -22,6 +22,8 @@ def pca(X, var=0.95):
                    the desired fraction of the variance.
                    nd is the number of dimensions selected.
     """
+    X = X - np.mean(X, axis=0)
+
     # Matriz de covarianza
     cov = np.cov(X, rowvar=False)
 
