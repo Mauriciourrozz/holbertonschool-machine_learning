@@ -9,7 +9,7 @@ def pca(X, var=0.95):
     """
     Performs PCA on a dataset X, keeping enough components to preserve
     the desired variance ratio (var).
-    
+
     Returns the projection matrix W.
     """
     U, S, Vt = np.linalg.svd(X, full_matrices=False)
