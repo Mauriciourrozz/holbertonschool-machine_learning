@@ -28,6 +28,9 @@ def initialize(X, k):
     if not isinstance(X, np.ndarray) or X.ndim != 2:
         return None
 
+    if not isinstance(k, int) or k <= 0 or k > X.shape[0]:
+        return None
+
     # obtengo el maximo y minimo valor de cada columna de x
     min_val = np.min(X, axis=0)
     max_val = np.max(X, axis=0)
