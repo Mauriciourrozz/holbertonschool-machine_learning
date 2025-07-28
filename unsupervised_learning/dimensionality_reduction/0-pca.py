@@ -5,8 +5,6 @@
 import numpy as np
 
 
-import numpy as np
-
 def pca(X, var=0.95):
     """
     Performs PCA on a dataset X, keeping enough components to preserve
