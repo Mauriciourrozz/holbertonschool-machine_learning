@@ -69,7 +69,6 @@ def kmeans(X, k, iterations=1000):
         return None, None
 
     # Inicializo centroides
-    np.random.seed(0)
     C = initialize(X, k)
 
     for i in range(iterations):
