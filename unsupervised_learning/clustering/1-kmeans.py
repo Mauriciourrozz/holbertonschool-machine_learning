@@ -83,18 +83,20 @@ def kmeans(X, k, iterations=1000):
         for j in range(k):
             puntos = X[clss == j]
 
-            if len(puntos) > 0:
+            if puntos.size > 0:
                 C[j] = np.mean(puntos, axis=0)
-            else:
-                # Reinicializar centroide si no tiene puntos asignados
-                C[j] = np.random.uniform(np.min(X, axis=0), np.max(X, axis=0))
 
-        # Comparar si los centroides cambiaron
+        empty_clusters = np.where([np.sum(clss == j) == 0 for j in range(k)])[0]
+
+        if len(empty_clusters) > 0:
+            min_val = np.min(X, axis=0)
+            max_val = np.max(X, axis=0)
+            C[empty_clusters] = np.random.uniform(
+                min_val, max_val, (len(empty_clusters), X.shape[1]))
+
         if np.allclose(C, C_prev):
             break
 
-    # Verificar y devolver resultados
     if C.shape == (k, X.shape[1]) and clss.shape == (X.shape[0],):
         return C, clss
-    else:
-        return None, None
+    return None, None
