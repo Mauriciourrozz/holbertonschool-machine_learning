@@ -63,6 +63,11 @@ def kmeans(X, k, iterations=1000):
         The cluster index assigned to each data point.
     Returns (None, None) if the algorithm fails.
     """
+    if not isinstance(X, np.ndarray) or X.ndim != 2:
+        return None, None
+    if not isinstance(k, int) or k <= 0 or k > X.shape[0]:
+        return None, None
+
     # Inicializo centroides
     C = initialize(X, k)
 
