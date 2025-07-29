@@ -86,7 +86,8 @@ def kmeans(X, k, iterations=1000):
             if puntos.size > 0:
                 C[j] = np.mean(puntos, axis=0)
 
-        empty_clusters = np.where([np.sum(clss == j) == 0 for j in range(k)])[0]
+        counts = np.bincount(clss, minlength=k)
+        empty_clusters = np.where(counts == 0)[0]
 
         if len(empty_clusters) > 0:
             min_val = np.min(X, axis=0)
