@@ -63,39 +63,44 @@ def kmeans(X, k, iterations=1000):
         The cluster index assigned to each data point.
     Returns (None, None) if the algorithm fails.
     """
-    # Validaciones iniciales
-    if (not isinstance(X, np.ndarray) or len(X.shape) != 2 or
-            not isinstance(k, int) or k <= 0 or
-            not isinstance(iterations, int) or iterations <= 0):
+    if not isinstance(X, np.ndarray) or len(X.shape) != 2:
+        return None, None
+    if not isinstance(k, int) or k <= 0 or k > X.shape[0]:
+        return None, None
+    if not isinstance(iterations, int) or iterations <= 0:
         return None, None
 
-    n, d = X.shape
-    centroids = initialize(X, k)
-    if centroids is None:
+    C = initialize(X, k)
+    if C is None:
         return None, None
+
+    min_vals = np.min(X, axis=0)
+    max_vals = np.max(X, axis=0)
+    clss = np.zeros(X.shape[0], dtype=int)
 
     for _ in range(iterations):
-        # Calcular las distancias de cada punto a cada centroide
-        distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2)
-
-        # Asignar cada punto al centroide más cercano
-        labels = np.argmin(distances, axis=1)
-
-        # Guardar una copia de los centroides actuales para comparar cambios
-        prev_centroids = centroids.copy()
-
-        # Actualizar los centroides
-        for i in range(k):
-            puntos = X[labels == i]
-            if puntos.shape[0] == 0:
-                # Si un cluster quedó vacío, se reinicializa su centroide
-                centroids[i] = initialize(X, 1)[0]
+        X_vectors = np.repeat(X[:, np.newaxis], k, axis=1)
+        X_vectors = np.reshape(X_vectors, (X.shape[0], k, X.shape[1]))
+        C_vectors = np.tile(C[np.newaxis, :], (X.shape[0], 1, 1))
+        C_vectors = np.reshape(C_vectors, (X.shape[0], k, X.shape[1]))
+        # Calculate Euclidean distances
+        distances = np.linalg.norm(X_vectors - C_vectors, axis=2)
+        new_clss = np.argmin(distances, axis=1)
+        old_C = C.copy()
+        # Update centroids
+        for j in range(k):
+            mask = (new_clss == j)
+            if np.any(mask):
+                C[j] = X[mask].mean(axis=0)
             else:
-                # Calcular el nuevo centroide como el promedio de sus puntos
-                centroids[i] = np.mean(puntos, axis=0)
+                C[j] = np.random.uniform(
+                    low=min_vals, high=max_vals, size=X.shape[1])
 
-        # Verificar si los centroides dejaron de cambiar (convergencia)
-        if np.allclose(centroids, prev_centroids):
-            break
+        if np.all(C == old_C):
+            return C, clss
+        C_vectors = np.tile(C, (X.shape[0], 1))
+        C_vectors = C_vectors.reshape(X.shape[0], k, X.shape[1])
+        distance = np.linalg.norm(X_vectors - C_vectors, axis=2)
+        clss = np.argmin(distance ** 2, axis=1)
 
-    return centroids, labels
+    return C, clss
