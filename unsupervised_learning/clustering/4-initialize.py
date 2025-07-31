@@ -18,6 +18,6 @@ def initialize(X, k):
     pi = np.full((k,), 1 / k)
     m, _ = kmeans(X, k)
     d = X.shape[1]
-    S = np.array([np.identity(d) for _ in range(k)])
+    S = np.tile(np.identity(d), (k, 1, 1))
 
     return pi, m, S
