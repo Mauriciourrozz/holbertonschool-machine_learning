@@ -9,95 +9,53 @@ def initialize(X, k):
     """
     Initialize cluster centroids for K-means using a multivariate
     uniform distribution.
-
-    Parameters:
-    -----------
-    X : numpy.ndarray of shape (n, d)
-        Dataset containing n data points with d dimensions.
-    k : int
-        Positive integer representing the number of clusters.
-
-    Returns:
-    --------
-    numpy.ndarray of shape (k, d)
-        Array containing the initialized centroids for each cluster.
-        Each centroid is sampled uniformly between the minimum and maximum
-        values of X along each dimension.
     """
-
     if not isinstance(X, np.ndarray) or X.ndim != 2:
-        return None
-
+        return None, None, None
     if not isinstance(k, int) or k <= 0 or k > X.shape[0]:
-        return None
+        return None, None, None
 
-    # obtengo el maximo y minimo valor de cada columna de x
     min_val = np.min(X, axis=0)
     max_val = np.max(X, axis=0)
 
-    # Generar k centroides aleatorios dentro del rango y
-    # que tenga d dimensiones
     centroids = np.random.uniform(
         low=min_val, high=max_val, size=(k, X.shape[1]))
 
-    return centroids
+    return centroids, min_val, max_val
 
 
 def kmeans(X, k, iterations=1000):
     """
     Performs K-means clustering on a dataset.
-
-    Parameters:
-    X : numpy.ndarray of shape (n, d)
-        The dataset, where n is the number of data points and
-        d is the number of dimensions.
-    k : int
-        The number of clusters to form.
-    iterations : int, optional (default=1000)
-        The maximum number of iterations to perform.
-
-    Returns:
-    C : numpy.ndarray of shape (k, d)
-        The final cluster centroids.
-    clss : numpy.ndarray of shape (n,)
-        The cluster index assigned to each data point.
-    Returns (None, None) if the algorithm fails.
     """
     if not isinstance(X, np.ndarray) or X.ndim != 2:
         return None, None
     if not isinstance(k, int) or k <= 0 or k > X.shape[0]:
         return None, None
+    if not isinstance(iterations, int) or iterations <= 0:
+        return None, None
 
-    # Inicializo centroides
-    C = initialize(X, k)
+    # Inicializo centroides y valores para reuso
+    C, min_val, max_val = initialize(X, k)
+    if C is None:
+        return None, None
 
     for i in range(iterations):
-        # Calcular distancias y asignar puntos al centroide más cercano
-        distancias = np.linalg.norm(X[:, np.newaxis, :] - C[np.newaxis, :, :], axis=2)
-        clss = np.argmin(distancias, axis=1)
+        dist = np.linalg.norm(X[:, None, :] - C[None, :, :], axis=2)
+        clss = np.argmin(dist, axis=1)
 
-        # Guardar copia de los centroides actuales
         C_prev = C.copy()
 
-        # Actualizar centroides
         for j in range(k):
             puntos = X[clss == j]
-
             if puntos.size > 0:
                 C[j] = np.mean(puntos, axis=0)
 
-        counts = np.bincount(clss, minlength=k)
-        empty_clusters = np.where(counts == 0)[0]
-
-        if len(empty_clusters) > 0:
-            min_val = np.min(X, axis=0)
-            max_val = np.max(X, axis=0)
-            C[empty_clusters] = np.random.uniform(
-                min_val, max_val, (len(empty_clusters), X.shape[1]))
+        empty = np.where(np.bincount(clss, minlength=k) == 0)[0]
+        if empty.size > 0:
+            C[empty] = np.random.uniform(low=min_val, high=max_val, size=(len(empty), X.shape[1]))
 
         if np.allclose(C, C_prev):
             break
 
-    if C.shape == (k, X.shape[1]) and clss.shape == (X.shape[0],):
-        return C, clss
-    return None, None
+    return C, clss
