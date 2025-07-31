@@ -63,39 +63,30 @@ def kmeans(X, k, iterations=1000):
         The cluster index assigned to each data point.
     Returns (None, None) if the algorithm fails.
     """
-    # Validaciones iniciales
-    if (not isinstance(X, np.ndarray) or len(X.shape) != 2 or
-            not isinstance(k, int) or k <= 0 or
-            not isinstance(iterations, int) or iterations <= 0):
+    try:
+        centroids = initialize(X, k)
+        for _ in range(iterations):
+            old_centroids = centroids.copy()
+            
+            # Calcular distancias (broadcasting correcto)
+            distances = np.linalg.norm(X[:, np.newaxis, :] - centroids[np.newaxis, :, :], axis=2)
+            
+            # Asignar puntos al centroide más cercano
+            labels = np.argmin(distances, axis=1)
+
+            # Actualizar centroides
+            for i in range(k):
+                cluster_points = X[labels == i]
+                if cluster_points.size == 0:
+                    centroids[i] = initialize(X, 1)[0]
+                else:
+                    centroids[i] = np.mean(cluster_points, axis=0)
+
+            # Verificar convergencia
+            if np.allclose(old_centroids, centroids):
+                break
+
+        return centroids, labels
+
+    except Exception:
         return None, None
-
-    n, d = X.shape
-    centroids = initialize(X, k)
-    if centroids is None:
-        return None, None
-
-    for _ in range(iterations):
-        # Calcular las distancias de cada punto a cada centroide
-        distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2)
-
-        # Asignar cada punto al centroide más cercano
-        labels = np.argmin(distances, axis=1)
-
-        # Guardar una copia de los centroides actuales para comparar cambios
-        prev_centroids = centroids.copy()
-
-        # Actualizar los centroides
-        for i in range(k):
-            puntos = X[labels == i]
-            if puntos.shape[0] == 0:
-                # Si un cluster quedó vacío, se reinicializa su centroide
-                centroids[i] = initialize(X, 1)[0]
-            else:
-                # Calcular el nuevo centroide como el promedio de sus puntos
-                centroids[i] = np.mean(puntos, axis=0)
-
-        # Verificar si los centroides dejaron de cambiar (convergencia)
-        if np.allclose(centroids, prev_centroids):
-            break
-
-    return centroids, labels
