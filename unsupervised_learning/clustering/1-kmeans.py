@@ -45,7 +45,7 @@ def initialize(X, k):
 
 def kmeans(X, k, iterations=1000):
     """
-    Performs K-means clustering on a dataset.
+    .
 
     Parameters:
     X : numpy.ndarray of shape (n, d)
