@@ -63,41 +63,39 @@ def kmeans(X, k, iterations=1000):
         The cluster index assigned to each data point.
     Returns (None, None) if the algorithm fails.
     """
-    if not isinstance(X, np.ndarray) or X.ndim != 2:
+    # Validaciones iniciales
+    if (not isinstance(X, np.ndarray) or len(X.shape) != 2 or
+            not isinstance(k, int) or k <= 0 or
+            not isinstance(iterations, int) or iterations <= 0):
         return None, None
-    if not isinstance(k, int) or k <= 0 or k > X.shape[0]:
+
+    n, d = X.shape
+    centroids = initialize(X, k)
+    if centroids is None:
         return None, None
 
-    # Inicializo centroides
-    C = initialize(X, k)
+    for _ in range(iterations):
+        # Calcular las distancias de cada punto a cada centroide
+        distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2)
 
-    for i in range(iterations):
-        # Calcular distancias y asignar puntos al centroide más cercano
-        distancias = np.linalg.norm(X[:, np.newaxis, :] - C[np.newaxis, :, :], axis=2)
-        clss = np.argmin(distancias, axis=1)
+        # Asignar cada punto al centroide más cercano
+        labels = np.argmin(distances, axis=1)
 
-        # Guardar copia de los centroides actuales
-        C_prev = C.copy()
+        # Guardar una copia de los centroides actuales para comparar cambios
+        prev_centroids = centroids.copy()
 
-        # Actualizar centroides
-        for j in range(k):
-            puntos = X[clss == j]
+        # Actualizar los centroides
+        for i in range(k):
+            puntos = X[labels == i]
+            if puntos.shape[0] == 0:
+                # Si un cluster quedó vacío, se reinicializa su centroide
+                centroids[i] = initialize(X, 1)[0]
+            else:
+                # Calcular el nuevo centroide como el promedio de sus puntos
+                centroids[i] = np.mean(puntos, axis=0)
 
-            if puntos.size > 0:
-                C[j] = np.mean(puntos, axis=0)
-
-        counts = np.bincount(clss, minlength=k)
-        empty_clusters = np.where(counts == 0)[0]
-
-        if len(empty_clusters) > 0:
-            min_val = np.min(X, axis=0)
-            max_val = np.max(X, axis=0)
-            C[empty_clusters] = np.random.uniform(
-                min_val, max_val, (len(empty_clusters), X.shape[1]))
-
-        if np.allclose(C, C_prev):
+        # Verificar si los centroides dejaron de cambiar (convergencia)
+        if np.allclose(centroids, prev_centroids):
             break
 
-    if C.shape == (k, X.shape[1]) and clss.shape == (X.shape[0],):
-        return C, clss
-    return None, None
+    return centroids, labels
