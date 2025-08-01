@@ -18,7 +18,7 @@ def expectation(X, pi, m, S):
 
     Returns:
     - g: (k, n) posterior probabilities
-    - l: total log likelihood
+    - log_likelihood: total log likelihood
     """
     try:
         n, d = X.shape
@@ -28,7 +28,7 @@ def expectation(X, pi, m, S):
         if (pi.shape != (k,) or
             m.shape != (k, d) or
             S.shape != (k, d, d) or
-            not np.isclose(np.sum(pi), 1)):
+                not np.isclose(np.sum(pi), 1)):
             return None, None
 
         g = np.zeros((k, n))
@@ -49,12 +49,13 @@ def expectation(X, pi, m, S):
         g /= total
 
         # Log likelihood
-        l = np.sum(np.log(total))
+        log_likelihood = np.sum(np.log(total))
 
-        if np.isnan(l) or np.isinf(l) or np.any(np.isnan(g)) or np.any(np.isinf(g)):
+        if np.isnan(log_likelihood) or np.isinf(log_likelihood) or np.any(
+                np.isnan(g)) or np.any(np.isinf(g)):
             return None, None
 
-        return g, l
+        return g, log_likelihood
 
     except Exception:
         return None, None
