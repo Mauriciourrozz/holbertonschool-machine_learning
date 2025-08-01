@@ -19,12 +19,20 @@ def maximization(X, g):
     - S: (k, d, d) updated covariances
     """
     try:
-        if (not isinstance(X, np.ndarray) or not isinstance(g, np.ndarray) or
-            len(X.shape) != 2 or len(g.shape) != 2):
+        if (not isinstance(X, np.ndarray) or not isinstance(g, np.ndarray)):
+            return None, None, None
+
+        if X.ndim != 2 or g.ndim != 2:
             return None, None, None
 
         n, d = X.shape
         k, n2 = g.shape
+
+        if n != n2:
+            return None, None, None
+
+        if not np.allclose(np.sum(g, axis=0), 1):
+            return None, None, None
 
         if n != n2:
             return None, None, None
