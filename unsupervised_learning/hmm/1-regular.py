@@ -19,7 +19,7 @@ def regular(P):
     """
     try:
         # Validaciones
-        if type(P) != np.ndarray:
+        if not isinstance(P, np.ndarray):
             return None
         if P.ndim != 2:
             return None
@@ -44,6 +44,6 @@ def regular(P):
 
         # Resolución por mínimos cuadrados
         pi, *_ = np.linalg.lstsq(A, b, rcond=None)
-        return pi[np.newaxis, :]  # Darle forma (1, n)
-    except:
-        return 
+        return pi[np.newaxis, :]
+    except Exception:
+        return
