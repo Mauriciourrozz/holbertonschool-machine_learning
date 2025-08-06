@@ -17,6 +17,10 @@ def regular(P):
     numpy.ndarray: Row vector of shape (1, n) with steady state probabilities,
                    or None if input is invalid or computation fails.
     """
+    if not np.allclose(P.sum(axis=1), 1):
+        return None
+    if np.any(P < 0) or np.any(P > 1):
+        return None
     n = P.shape[0]
     try:
         P_T = P.T
