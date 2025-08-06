@@ -17,6 +17,8 @@ def regular(P):
     numpy.ndarray: Row vector of shape (1, n) with steady state probabilities,
                    or None if input is invalid or computation fails.
     """
+    if P.ndim != 2 or P.shape[0] != P.shape[1]:
+        return None
     if not np.allclose(P.sum(axis=1), 1):
         return None
     if np.any(P < 0) or np.any(P > 1):
