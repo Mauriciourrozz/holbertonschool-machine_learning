@@ -20,11 +20,11 @@ def viterbi(Observation, Emission, Transition, Initial):
     path (list): length T, most likely sequence of hidden states
     P (float): probability of obtaining the path sequence
     """
-   # Validar que todos los parámetros sean arreglos de numpy
+    # Validar que todos los parámetros sean arreglos de numpy
     if (not isinstance(Observation, np.ndarray) or
         not isinstance(Emission, np.ndarray) or
         not isinstance(Transition, np.ndarray) or
-        not isinstance(Initial, np.ndarray)):
+            not isinstance(Initial, np.ndarray)):
         return None, None
 
     N = Emission.shape[0]  # número de estados ocultos
