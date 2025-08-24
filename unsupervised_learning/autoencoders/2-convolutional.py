@@ -28,7 +28,7 @@ def autoencoder(input_dims, filters, latent_dims):
     for i, f in enumerate(filters, start=1):
         x = keras.layers.Conv2D(filters=f, kernel_size=(3, 3), padding="same",
                                 activation="relu", name=f"enc_conv_{i}")(x)
-        x = keras.layers.MaxPooling2D(pool_size=(2, 2),
+        x = keras.layers.MaxPooling2D(pool_size=(2, 2), padding="same",
                                       name=f"enc_pool_{i}")(x)
 
     # Capa latente final
