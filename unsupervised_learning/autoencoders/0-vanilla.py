@@ -4,13 +4,15 @@
 """
 import tensorflow.keras as keras
 
+
 def autoencoder(input_dims, hidden_layers, latent_dims):
     """
     Build an autoencoder (encoder, decoder, and full model).
 
     Args:
         input_dims (int): Input dimensionality of the model.
-        hidden_layers (list[int]): Number of units for each encoder hidden layer (in order).
+        hidden_layers (list[int]): Number of units for each
+        encoder hidden layer (in order).
         latent_dims (int): Dimensionality of the latent space.
 
     Returns:
@@ -40,4 +42,3 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     auto.compile(optimizer='adam', loss='binary_crossentropy')
 
     return encoder, decoder, auto
-
