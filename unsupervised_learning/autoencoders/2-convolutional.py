@@ -32,10 +32,7 @@ def autoencoder(input_dims, filters, latent_dims):
                                       name=f"enc_pool_{i}")(x)
 
     # Capa latente final
-    latent = keras.layers.Conv2D(filters=latent_dims[2], kernel_size=(3, 3),
-                                 padding="same", activation="relu",
-                                 name="latent")(x)
-    encoder = keras.Model(inputs=enc_in, outputs=latent, name="encoder")
+    encoder = keras.Model(inputs=enc_in, outputs=x, name="encoder")
 
     # Decoder
     dec_in = keras.Input(shape=latent_dims, name="decoder_input")
