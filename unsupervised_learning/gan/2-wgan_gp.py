@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+"""
+2-wgan_gp.py
+"""
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
