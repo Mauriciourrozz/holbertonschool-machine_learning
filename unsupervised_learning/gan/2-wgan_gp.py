@@ -12,7 +12,31 @@ class WGAN_GP(keras.Model):
     """
     Wasserstein GAN with Gradient Penalty (WGAN-GP).
 
-    Implements a WGAN with gradient penalty to enforce the Lipschitz constraint.
+    Implements a WGAN with gradient penalty to enforce the Lipschitz constraint
+    instead of weight clipping.
+
+    Attributes
+    ----------
+    generator : keras.Model
+        Neural network that generates fake samples.
+    discriminator : keras.Model
+        Neural network that scores samples (critic).
+    latent_generator : callable
+        Function generating latent vectors (noise).
+    real_examples : tf.Tensor
+        Real training samples.
+    batch_size : int
+        Number of samples per batch.
+    disc_iter : int
+        Number of discriminator updates per generator update.
+    learning_rate : float
+        Learning rate for both optimizers.
+    beta_1 : float
+        Beta_1 for Adam optimizer.
+    beta_2 : float
+        Beta_2 for Adam optimizer.
+    lambda_gp : float
+        Weight for the gradient penalty term.
     """
 
     def __init__(
@@ -23,6 +47,25 @@ class WGAN_GP(keras.Model):
         """
         Initialize the WGAN-GP with generator, discriminator,
         losses, optimizers, and parameters for gradient penalty.
+
+        Parameters
+        ----------
+        generator : keras.Model
+            The generator network.
+        discriminator : keras.Model
+            The discriminator (critic) network.
+        latent_generator : callable
+            Function generating latent vectors.
+        real_examples : tf.Tensor
+            Tensor of real samples.
+        batch_size : int, optional
+            Training batch size (default 200).
+        disc_iter : int, optional
+            Number of discriminator iterations per generator update (default 2).
+        learning_rate : float, optional
+            Learning rate for both optimizers (default 0.005).
+        lambda_gp : float, optional
+            Gradient penalty weight (default 10).
         """
         super().__init__()
         self.latent_generator = latent_generator
@@ -67,13 +110,41 @@ class WGAN_GP(keras.Model):
         )
 
     def get_fake_sample(self, size=None, training=False):
-        """Generate a batch of fake samples from the generator."""
+        """
+        Generate a batch of fake samples from the generator.
+
+        Parameters
+        ----------
+        size : int, optional
+            Number of fake samples (default self.batch_size).
+        training : bool, optional
+            Whether the generator is in training mode.
+
+        Returns
+        -------
+        tf.Tensor
+            Generated fake samples.
+        """
         if not size:
             size = self.batch_size
-        return self.generator(self.latent_generator(size), training=training)
+        return self.generator(
+            self.latent_generator(size), training=training
+        )
 
     def get_real_sample(self, size=None):
-        """Sample a batch of real examples from the dataset."""
+        """
+        Sample a batch of real examples from the dataset.
+
+        Parameters
+        ----------
+        size : int, optional
+            Number of samples (default self.batch_size).
+
+        Returns
+        -------
+        tf.Tensor
+            Randomly selected real samples.
+        """
         if not size:
             size = self.batch_size
         sorted_indices = tf.range(tf.shape(self.real_examples)[0])
@@ -81,13 +152,39 @@ class WGAN_GP(keras.Model):
         return tf.gather(self.real_examples, random_indices)
 
     def get_interpolated_sample(self, real_sample, fake_sample):
-        """Generate interpolated samples between real and fake examples."""
+        """
+        Generate interpolated samples between real and fake examples.
+
+        Parameters
+        ----------
+        real_sample : tf.Tensor
+            Batch of real samples.
+        fake_sample : tf.Tensor
+            Batch of fake samples.
+
+        Returns
+        -------
+        tf.Tensor
+            Interpolated samples.
+        """
         u = tf.random.uniform(self.scal_shape)
         v = tf.ones(self.scal_shape) - u
         return u * real_sample + v * fake_sample
 
     def gradient_penalty(self, interpolated_sample):
-        """Compute the gradient penalty for a batch of interpolated samples."""
+        """
+        Compute the gradient penalty for a batch of interpolated samples.
+
+        Parameters
+        ----------
+        interpolated_sample : tf.Tensor
+            Interpolated samples between real and fake examples.
+
+        Returns
+        -------
+        tf.Tensor
+            Gradient penalty scalar.
+        """
         with tf.GradientTape() as gp_tape:
             gp_tape.watch(interpolated_sample)
             pred = self.discriminator(interpolated_sample, training=True)
@@ -99,30 +196,41 @@ class WGAN_GP(keras.Model):
         """
         Perform one training step for discriminator (with gradient penalty)
         and generator.
+
+        Parameters
+        ----------
+        useless_argument : any
+            Required by keras.Model.fit but unused.
+
+        Returns
+        -------
+        dict
+            Dictionary with discriminator loss, generator loss, and gradient penalty:
+            {"discr_loss": discr_loss, "gen_loss": gen_loss, "gp": gp}
         """
-        # obtener muestras para calcular pérdidas que se devolverán
-        real_sample = self.get_real_sample()
-        fake_sample = self.get_fake_sample(training=True)
-        interpolated_sample = self.get_interpolated_sample(real_sample, fake_sample)
-
-        # predicciones
-        real_pred = self.discriminator(real_sample, training=True)
-        fake_pred = self.discriminator(fake_sample, training=True)
-
-        # pérdidas
-        discr_loss = self.discriminator.loss(real_pred, fake_pred)
-        gp = self.gradient_penalty(interpolated_sample)
-
         # Entrenar Discriminador
         for _ in range(self.disc_iter):
             with tf.GradientTape() as tape:
-                # recalcular gradientes
-                real_pred_loop = self.discriminator(real_sample, training=True)
-                fake_pred_loop = self.discriminator(fake_sample, training=True)
-                discr_loss_loop = self.discriminator.loss(real_pred_loop, fake_pred_loop)
-                gp_loop = self.gradient_penalty(interpolated_sample)
-                total_discr_loss = discr_loss_loop + self.lambda_gp * gp_loop
-            grads = tape.gradient(total_discr_loss, self.discriminator.trainable_variables)
+                # obtener muestras reales y falsas
+                real_sample = self.get_real_sample()
+                fake_sample = self.get_fake_sample(training=True)
+                interpolated_sample = self.get_interpolated_sample(real_sample, fake_sample)
+
+                # predicciones
+                real_pred = self.discriminator(real_sample, training=True)
+                fake_pred = self.discriminator(fake_sample, training=True)
+
+                # pérdida tradicional del discriminador
+                discr_loss = self.discriminator.loss(real_pred, fake_pred)
+
+                # gradient penalty
+                gp = self.gradient_penalty(interpolated_sample)
+
+                # pérdida total
+                new_discr_loss = discr_loss + self.lambda_gp * gp
+
+            # aplicar gradientes
+            grads = tape.gradient(new_discr_loss, self.discriminator.trainable_variables)
             self.discriminator.optimizer.apply_gradients(
                 zip(grads, self.discriminator.trainable_variables)
             )
@@ -131,12 +239,15 @@ class WGAN_GP(keras.Model):
         with tf.GradientTape() as tape:
             fake_sample = self.get_fake_sample(training=True)
             fake_pred = self.discriminator(fake_sample, training=True)
+
+            # pérdida del generador
             gen_loss = self.generator.loss(fake_pred)
+
+        # aplicar gradientes
         grads = tape.gradient(gen_loss, self.generator.trainable_variables)
         self.generator.optimizer.apply_gradients(
             zip(grads, self.generator.trainable_variables)
         )
 
-        # devolver métricas calculadas fuera del loop para el checker
+        # devolver métricas
         return {"discr_loss": discr_loss, "gen_loss": gen_loss, "gp": gp}
-
