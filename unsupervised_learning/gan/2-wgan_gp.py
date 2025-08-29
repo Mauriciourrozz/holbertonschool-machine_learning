@@ -100,7 +100,7 @@ class WGAN_GP(keras.Model):
         )
 
         # define discriminator loss and optimizer
-        self.discriminator.loss = lambda x, y: tf.reduce_mean(y) - tf.reduce_mean(x)
+        self.discriminator.loss = lambda x, y: tf.reduce_mean(x) - tf.reduce_mean(y)
         self.discriminator.optimizer = keras.optimizers.Adam(
             learning_rate=self.learning_rate, beta_1=self.beta_1,
             beta_2=self.beta_2
@@ -221,7 +221,7 @@ class WGAN_GP(keras.Model):
                 fake_pred = self.discriminator(fake_sample, training=True)
 
                 # pérdida tradicional del discriminador
-                discr_loss = self.discriminator.loss(fake_pred, real_pred)
+                discr_loss = self.discriminator.loss(real_pred, fake_pred)
 
                 # gradient penalty
                 gp = self.gradient_penalty(interpolated_sample)
