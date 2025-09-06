@@ -31,10 +31,27 @@ class RNNCell:
         h -- int, the dimensionality of the hidden state.
         o -- int, the dimensionality of the output (output size).
         """
-        self.Wh = np.random.normal(size=(h, h + i))
-        self.Wy = np.random.normal(size=(h, o))  # Corrección aquí
-        self.bh = np.zeros((h,))
-        self.by = np.zeros((o,))
+        self.Wh = np.random.normal(size=(i + h, h))
+        self.Wy = np.random.normal(size=(h, o))
+        self.bh = np.zeros((1, h))
+        self.by = np.zeros((1, o))
+
+    def softmax(x):
+        """
+        Applies the softmax function to the input array to convert it into
+            probabilities.
+
+        Softmax ensures the outputs are probabilities that sum to 1.
+
+        Parameters:
+        z -- numpy.ndarray, the input array to apply softmax to.
+
+        Returns:
+        numpy.ndarray, the softmax probabilities.
+        """
+        # Función softmax para convertir las salidas en probabilidades
+        exp_x = np.exp(x - np.max(x, axis=1, keepdims=True))
+        return exp_x / exp_x.sum(axis=1, keepdims=True)
 
     def forward(self, h_prev, x_t):
         """
@@ -56,26 +73,9 @@ class RNNCell:
         concatenation = np.concatenate([h_prev, x_t], axis=1)
 
         # Cálculo del nuevo estado oculto
-        h_next = np.tanh(np.dot(concatenation, self.Wh.T) + self.bh)  # Corregido el .T de Wh
+        h_next = np.tanh(np.matmul(concatenation, self.Wh) + self.bh)
 
         # Cálculo de la salida y, aplicando softmax
-        y  = self.softmax(np.dot(h_next, self.Wy.T) + self.by)
+        y = self.softmax(np.matmul(h_next, self.Wy) + self.by)
 
         return h_next, y
-
-    def softmax(self, z):
-        """
-        Applies the softmax function to the input array to convert it into
-            probabilities.
-
-        Softmax ensures the outputs are probabilities that sum to 1.
-
-        Parameters:
-        z -- numpy.ndarray, the input array to apply softmax to.
-
-        Returns:
-        numpy.ndarray, the softmax probabilities.
-        """
-        # Función softmax para convertir las salidas en probabilidades
-        exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
-        return exp_z / exp_z.sum(axis=1, keepdims=True)
