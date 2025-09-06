@@ -59,7 +59,7 @@ class RNNCell:
         h_next = np.tanh(np.dot(concatenation, self.Wh) + self.bh)
 
         # Cálculo de la salida y, aplicando softmax
-        y = self.softmax(np.dot(h_next, self.Wy.T) + self.by)
+        y  = self.softmax(np.dot(h_next, self.Wy.T) + self.by)
 
         return h_next, y
 
