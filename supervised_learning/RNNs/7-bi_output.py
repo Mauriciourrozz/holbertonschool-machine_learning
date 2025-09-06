@@ -89,7 +89,8 @@ class BidirectionalCell:
         for time_step in range(t):
             linear_output = np.dot(H[time_step], self.Wy) + self.by
 
-            y_exp = np.exp(linear_output - np.max(linear_output, axis=1, keepdims=True))
+            y_exp = np.exp(linear_output - np.max(
+                linear_output, axis=1, keepdims=True))
             Y[time_step] = y_exp / np.sum(y_exp, axis=1, keepdims=True)
 
         return Y
