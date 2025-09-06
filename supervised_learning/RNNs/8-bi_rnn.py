@@ -50,16 +50,13 @@ def bi_rnn(bi_cell, X, h_0, h_t):
     for step in range(t):
         H[step] = np.concatenate((H_forward[step], H_backward[step]), axis=1)
     
-    # Calcular las salidas usando el método output de bi_cell
-    # Primero obtenemos una salida de prueba para conocer la dimensionalidad
-    test_output = bi_cell.output(H[0])
-    output_dim = test_output.shape[1]
+    # Calcular las salidas - necesitamos agregar una dimensión temporal
+    Y = np.zeros((t, m, bi_cell.by.shape[1]))  # Usamos by para obtener la dimensión de salida
     
-    # Inicializar array de salidas
-    Y = np.zeros((t, m, output_dim))
-    
-    # Calcular todas las salidas
     for step in range(t):
-        Y[step] = bi_cell.output(H[step])
+        # Agregar dimensión temporal para que sea (1, m, 2*h)
+        h_step = H[step][np.newaxis, :, :]
+        output_step = bi_cell.output(h_step)
+        Y[step] = output_step[0]  # Remover la dimensión temporal
     
     return H, Y
