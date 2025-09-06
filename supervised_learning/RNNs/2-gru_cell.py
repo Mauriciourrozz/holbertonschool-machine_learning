@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+"""
+2-gru_cell.py
+"""
 import numpy as np
 
 
