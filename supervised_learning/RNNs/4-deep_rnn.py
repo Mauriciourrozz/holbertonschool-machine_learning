@@ -51,8 +51,11 @@ def deep_rnn(rnn_cells, X, h_0):
                 # Para pasos posteriores, usar la salida de la capa anterior
                 x = h_prev[j-1]
 
+            # Concatenar el estado oculto anterior con la entrada
+            cat = np.concatenate((h_prev[j], x), axis=1)  # Concatenar a lo largo de la dimensión de características
+
             # Calcular el nuevo estado oculto para la capa j
-            h_prev[j], _ = rnn_cells[j].forward(h_prev[j], x)
+            h_prev[j], _ = rnn_cells[j].forward(h_prev[j], cat)
 
             # Guardar el estado oculto de la capa j en H
             H[i, :, j, :] = h_prev[j]
