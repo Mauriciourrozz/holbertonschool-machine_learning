@@ -4,7 +4,12 @@
 """
 import numpy as np
 
+
 class BidirectionalCell:
+    """
+    Implements a Bidirectional RNN Cell that performs both forward and
+    backward passes
+    """
     def __init__(self, i, h, o):
         """
         Initializes a Bidirectional RNN cell.
@@ -27,11 +32,14 @@ class BidirectionalCell:
         Performs the forward pass for a single time step.
 
         Args:
-            h_prev: numpy.ndarray of shape (m, h) containing the previous hidden state.
-            x_t: numpy.ndarray of shape (m, i) containing the input data at the current time step.
+            h_prev: numpy.ndarray of shape (m, h) containing the previous
+            hidden state.
+            x_t: numpy.ndarray of shape (m, i) containing the input data
+            at the current time step.
 
         Returns:
-            h_next: numpy.ndarray of shape (m, h) containing the next hidden state in the forward direction.
+            h_next: numpy.ndarray of shape (m, h) containing the next
+            hidden state in the forward direction.
         """
         concat = np.concatenate((h_prev, x_t), axis=1)
         h_next = np.tanh(np.matmul(concat, self.Whf) + self.bhf)
