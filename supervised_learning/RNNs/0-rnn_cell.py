@@ -78,4 +78,4 @@ class RNNCell:
         """
         # Función softmax para convertir las salidas en probabilidades
         exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
-        return exp_z / np.sum(exp_z, axis=1, keepdims=True)
+        return exp_z / exp_z.sum(axis=1, keepdims=True)
