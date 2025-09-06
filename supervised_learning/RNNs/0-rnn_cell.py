@@ -36,7 +36,6 @@ class RNNCell:
         self.bh = np.zeros((1, h))
         self.by = np.zeros((1, o))
 
-    @staticmethod()
     def softmax(x):
         """
         Applies the softmax function to the input array to convert it into
