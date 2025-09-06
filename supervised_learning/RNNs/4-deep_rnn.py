@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def deep_rnn(rnn_cells, X, H_0):
+def deep_rnn(rnn_cells, X, h_0):
     """
     Performs forward propagation for a deep RNN.
 
@@ -24,7 +24,7 @@ def deep_rnn(rnn_cells, X, H_0):
     """
     t, m, i = X.shape
     lc = len(rnn_cells)
-    h = H_0.shape[-1]
+    h = h_0.shape[-1]
 
     H = np.zeros((t + 1, lc, m, h))
     Y = np.zeros((t, m, rnn_cells[-1].Wy.shape[1]))
