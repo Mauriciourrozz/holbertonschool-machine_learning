@@ -31,7 +31,7 @@ class RNNCell:
         h -- int, the dimensionality of the hidden state.
         o -- int, the dimensionality of the output (output size).
         """
-        self.Wh = np.random.normal(size=(h + i, h))
+        self.Wh = np.random.normal(size=(h, h + i))
         self.Wy = np.random.normal(size=(h, o))
         self.bh = np.zeros((h,))
         self.by = np.zeros((o,))
@@ -56,7 +56,7 @@ class RNNCell:
         concatenation = np.concatenate([h_prev, x_t], axis=1)
 
         # Cálculo del nuevo estado oculto
-        h_next = np.tanh(np.dot(concatenation, self.Wh.T) + self.bh)
+        h_next = np.tanh(np.dot(concatenation, self.Wh) + self.bh)
 
         # Cálculo de la salida y, aplicando softmax
         y = self.softmax(np.dot(h_next, self.Wy.T) + self.by)
