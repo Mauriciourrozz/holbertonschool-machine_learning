@@ -1,67 +1,51 @@
 #!/usr/bin/env python3
-"""
-4-deep_rnn.py
-"""
+"""Deep RNN"""
 import numpy as np
 
 
-def deep_rnn(rnn_cells, X, h_0):
+def deep_rnn(rnn_cells, X, H_0):
     """
     Performs forward propagation for a deep RNN.
 
     Args:
-    rnn_cells (list): A list of RNNCell instances to be used for
-        forward propagation. Length of the list is the number of layers.
-    X (numpy.ndarray): The input data of shape (t, m, i), where:
-                       - t is the number of time steps,
-                       - m is the batch size,
-                       - i is the input dimensionality.
-    h_0 (numpy.ndarray): The initial hidden state of shape (L, m, h), where:
-                         - L is the number of layers,
-                         - m is the batch size,
-                         - h is the dimensionality of the hidden state.
+        rnn_cells: List of RNNCell instances for each layer.
+        X: numpy.ndarray with shape (t, m, i) containing the input data
+            t: maximum number of time steps
+            m: lot size
+            i: dimensionality of data
+        H_0: numpy.ndarray with shape (lc, m, h) containing the initial hidden
+        state
+            lc: number of layers
+            h: dimensionality of the hidden state
 
     Returns:
-    tuple: A tuple containing:
-        - H (numpy.ndarray): Hidden states for all layers at all time steps
-        - Y (numpy.ndarray): The outputs of the final layer at all time steps
+        H: numpy.ndarray with all states hidden for each time step and layer
+        And: numpy.ndarray with all results for each time step
     """
-    # Obtener las dimensiones de la entrada
     t, m, i = X.shape
-    # Número de capas
-    L = len(rnn_cells)
-    # Dimensionalidad del estado oculto
-    h = h_0.shape[-1]
+    lc = len(rnn_cells)
+    h = H_0.shape[-1]
 
-    # Inicializar matrices para los estados ocultos (H) y las salidas (Y)
-    H = np.zeros((t, m, L, h))
-    Y = np.zeros((t, m, rnn_cells[-1].Wy.shape[-1]))
+    H = np.zeros((t + 1, lc, m, h))
+    Y = np.zeros((t, m, rnn_cells[-1].Wy.shape[1]))
 
-    # Establecer el estado oculto inicial
-    h_prev = h_0
+    H[0] = H_0
 
-    # Iterar sobre los pasos de tiempo
-    for i in range(t):
-        # Iterar sobre las capas de la red
-        for j in range(L):
-            # Si estamos en el primer paso de tiempo, usar la entrada
-            if i == 0:
-                x = X[i]
+    for step in range(t):
+        for layer_idx in range(lc):
+            if layer_idx == 0:
+                input_data = X[step]
             else:
-                # Para pasos posteriores, usar la salida de la capa anterior
-                x = h_prev[j-1]
+                input_data = H[step + 1, layer_idx - 1]
 
-            # Concatenar el estado oculto anterior con la entrada
-            cat = np.concatenate((h_prev[j], x), axis=1)  # Concatenar a lo largo de la dimensión de características
+            prev_hidden_state = H[step, layer_idx]
 
-            # Calcular el nuevo estado oculto para la capa j
-            h_prev[j], _ = rnn_cells[j].forward(h_prev[j], cat)
+            next_hidden_state, output = rnn_cells[layer_idx].forward(
+                prev_hidden_state, input_data)
 
-            # Guardar el estado oculto de la capa j en H
-            H[i, :, j, :] = h_prev[j]
+            H[step + 1, layer_idx] = next_hidden_state
 
-        # Almacenar la salida de la última capa (capa de salida) en Y
-        Y[i] = h_prev[-1]
+            if layer_idx == lc - 1:
+                Y[step] = output
 
-    # Retornar los estados ocultos y las salidas
     return H, Y
