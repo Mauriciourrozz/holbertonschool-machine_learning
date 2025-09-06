@@ -36,7 +36,7 @@ class RNNCell:
         self.bh = np.zeros((1, h))
         self.by = np.zeros((1, o))
 
-    def softmax(x):
+    def softmax(self, x):
         """
         Applies the softmax function to the input array to convert it into
             probabilities.
@@ -44,7 +44,7 @@ class RNNCell:
         Softmax ensures the outputs are probabilities that sum to 1.
 
         Parameters:
-        z -- numpy.ndarray, the input array to apply softmax to.
+        x -- numpy.ndarray, the input array to apply softmax to.
 
         Returns:
         numpy.ndarray, the softmax probabilities.
