@@ -52,7 +52,7 @@ def deep_rnn(rnn_cells, X, h_0):
                 x = h_prev[j-1]
 
             # Calcular el nuevo estado oculto para la capa j
-            h_prev[j], _, _ = rnn_cells[j].forward(h_prev[j], x)
+            h_prev[j], _ = rnn_cells[j].forward(h_prev[j], x)
 
             # Guardar el estado oculto de la capa j en H
             H[i, :, j, :] = h_prev[j]
