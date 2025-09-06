@@ -31,7 +31,7 @@ class RNNCell:
         h -- int, the dimensionality of the hidden state.
         o -- int, the dimensionality of the output (output size).
         """
-        self.Wh = np.random.normal(size=(h, h + i))
+        self.Wh = np.random.normal(size=(h + i, h))
         self.Wy = np.random.normal(size=(h, o))
         self.bh = np.zeros((h,))
         self.by = np.zeros((o,))
