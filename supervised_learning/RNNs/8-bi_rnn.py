@@ -25,32 +25,41 @@ def bi_rnn(bi_cell, X, h_0, h_t):
     H -- All hidden states concatenated, numpy.ndarray
     AND -- All outputs, numpy.ndarray
     """
-
     # Obtener dimensiones
     t, m, i = X.shape
     h = h_0.shape[1]
-
-    # Inicializar arrays para almacenar estados y salidas
+    
+    # Inicializar arrays para almacenar estados
     H_forward = np.zeros((t, m, h))
     H_backward = np.zeros((t, m, h))
     H = np.zeros((t, m, 2 * h))  # Concatenado
-    Y = np.zeros((t, m, bi_cell.output_size))
-
+    
     # Propagación forward (de 0 a t-1)
     h_prev_forward = h_0
     for step in range(t):
         h_prev_forward = bi_cell.forward(h_prev_forward, X[step])
         H_forward[step] = h_prev_forward
-
+    
     # Propagación backward (de t-1 a 0)
     h_prev_backward = h_t
     for step in range(t-1, -1, -1):
         h_prev_backward = bi_cell.backward(h_prev_backward, X[step])
         H_backward[step] = h_prev_backward
-
+    
     # Concatenar estados forward y backward
     for step in range(t):
         H[step] = np.concatenate((H_forward[step], H_backward[step]), axis=1)
+    
+    # Calcular las salidas usando el método output de bi_cell
+    # Primero obtenemos una salida de prueba para conocer la dimensionalidad
+    test_output = bi_cell.output(H[0])
+    output_dim = test_output.shape[1]
+    
+    # Inicializar array de salidas
+    Y = np.zeros((t, m, output_dim))
+    
+    # Calcular todas las salidas
+    for step in range(t):
         Y[step] = bi_cell.output(H[step])
-
+    
     return H, Y
