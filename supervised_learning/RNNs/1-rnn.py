@@ -29,7 +29,7 @@ def rnn(rnn_cell, X, h_0):
         h[step] = h_prev
         h_prev, y_step = rnn_cell.forward(h_prev, X[step])
         y[step] = y_step
-        
+
     # Almacenamos el último estado oculto
     h[t] = h_prev
 
