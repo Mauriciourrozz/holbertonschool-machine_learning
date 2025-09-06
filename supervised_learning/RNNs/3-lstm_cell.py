@@ -42,11 +42,11 @@ class LSTMCell:
         self.Wo = np.random.normal(size=(i + h, h))
         self.Wy = np.random.normal(size=(h, o))
 
-        self.bf = np.zeros((h,))
-        self.bu = np.zeros((h,))
-        self.bc = np.zeros((h,))
-        self.bo = np.zeros((h,))
-        self.by = np.zeros((o,))
+        self.bf = np.zeros((1, h))
+        self.bu = np.zeros((1, h))
+        self.bc = np.zeros((1, h))
+        self.bo = np.zeros((1, h))
+        self.by = np.zeros((1, o))
 
     def forward(self, h_prev, c_prev, x_t):
         """
