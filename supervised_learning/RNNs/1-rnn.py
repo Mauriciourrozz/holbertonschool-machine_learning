@@ -19,12 +19,18 @@ def rnn(rnn_cell, X, h_0):
     Y -- numpy.ndarray of shape (t, m, o), all outputs
     """
     t, m, i = X.shape
-    h = np.zeros((t, m, rnn_cell.Wh.shape[1]))
+    # Inicialización de h
+    h = np.zeros((t + 1, m, rnn_cell.Wh.shape[1]))
+    # Inicialización de y
     y = np.zeros((t, m, rnn_cell.Wy.shape[1]))
     h_prev = h_0
 
-    for time_step in range(t):
-        h[time_step], y[time_step] = rnn_cell.forward(h_prev, X[time_step])
-        h_prev = h[time_step]
+    for step in range(t):
+        h[step] = h_prev
+        h_prev, y_step = rnn_cell.forward(h_prev, X[step])
+        y[step] = y_step
+        
+    # Almacenamos el último estado oculto
+    h[t] = h_prev
 
     return h, y
