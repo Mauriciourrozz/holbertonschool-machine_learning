@@ -47,10 +47,4 @@ def fasttext_model(sentences, vector_size=100,
         epochs=epochs
     )
 
-    model.train(
-        sentences,
-        total_examples=model.corpus_count,
-        epochs=epochs
-    )
-
     return model
