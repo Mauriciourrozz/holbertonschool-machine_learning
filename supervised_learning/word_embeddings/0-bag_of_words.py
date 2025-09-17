@@ -23,6 +23,7 @@ def bag_of_words(sentences, vocab=None):
         # pasar a minúsculas
         sentence = sentence.lower()
         # eliminar puntuación
+        sentence = re.sub(r"'s\b", "", sentence)
         sentence = re.sub(r"[^a-z0-9\s]", "", sentence)
         clean_sentences.append(sentence)
 
