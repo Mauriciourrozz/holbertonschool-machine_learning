@@ -22,31 +22,30 @@ def tf_idf(sentences, vocab=None):
 
     # Construir vocabulario si no se proporciona
     if vocab is None:
-        vocab = sorted(
-            {word for words in tokenized_sentences for word in words})
+        vocab = sorted({word for words in tokenized_sentences for word in words})
 
-    # Número total de documentos
     N = len(sentences)
 
-    # Calcular cuántos documentos contienen cada palabra
-    df = {word: 0 for word in vocab}
+    # Calcular document frequency
+    df = {}
     for word in vocab:
-        for sentence in tokenized_sentences:
-            if word in sentence:
-                df[word] += 1
+        df[word] = sum(1 for sentence in tokenized_sentences if word in sentence)
 
-    # Inicializar matriz TF-IDF
+    # Inicializar matriz
     embeddings = np.zeros((N, len(vocab)), dtype=float)
 
+    # Rellenar matriz TF-IDF
+    word_to_index = {word: i for i, word in enumerate(vocab)}
+
     for i, words in enumerate(tokenized_sentences):
-        # frecuencia de palabras
-        word_counts = {w: words.count(w) for w in words}
-        total_words = len(words)
-        for j, word in enumerate(vocab):
-            # frecuencia normalizada
-            tf = word_counts.get(word, 0) / total_words
-            # IDF
-            idf = np.log(N / (1 + df[word]))
-            embeddings[i, j] = tf * idf
+        counts = {}
+        for w in words:
+            # frecuencia absoluta
+            counts[w] = counts.get(w, 0) + 1
+        for w, c in counts.items():
+            if w in word_to_index:
+                j = word_to_index[w]
+                idf = np.log(N / (1 + df[w]))
+                embeddings[i, j] = c * idf
 
     return embeddings, np.array(vocab)
