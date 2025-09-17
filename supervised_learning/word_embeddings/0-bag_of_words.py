@@ -46,6 +46,6 @@ def bag_of_words(sentences, vocab=None):
         words_in_sentence = set(clean_sentences[i].split())
         for j in range(f):
             if features[j] in words_in_sentence:
-                embeddings[i, j] = 1
+                embeddings[i, j] = words.count(features[j])
 
     return embeddings, features
