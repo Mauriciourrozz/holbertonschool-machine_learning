@@ -2,7 +2,7 @@
 """
 3-gensim_to_keras.py
 """
-from tensorflow.keras.layers import Embedding
+import tensorflow as tf
 
 
 def gensim_to_keras(model):
@@ -24,7 +24,7 @@ def gensim_to_keras(model):
     embedding_matrix = model.wv.vectors
 
     # Crear la capa Embedding en Keras
-    embedding_layer = Embedding(
+    embedding_layer = tf.keras.layers.Embedding(
         input_dim=vocab_size,
         output_dim=vector_size,
         weights=[embedding_matrix],
