@@ -45,7 +45,7 @@ def tf_idf(sentences, vocab=None):
         for w, c in counts.items():
             if w in word_to_index:
                 j = word_to_index[w]
-                idf = np.log(N / (1 + df[w]))
+                idf = np.log((N + 1) / (1 + df[w]))
                 embeddings[i, j] = c * idf
 
     return embeddings, np.array(vocab)
