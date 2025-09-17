@@ -17,34 +17,35 @@ def bag_of_words(sentences, vocab=None):
                                 s = number of sentences, f = number of features
     features (list of str): List of vocabulary words used as features.
     """
-    clean_sentences = []
+    # Preprocesamiento: convertir a minúsculas y tokenizar
+    def preprocess(sentence):
+        # Convertir a minúsculas y eliminar caracteres no alfabéticos
+        sentence = re.sub(r'[^a-zA-Z\s]', '', sentence.lower())
+        return sentence.split()
 
-    for sentence in sentences:
-        # pasar a minúsculas
-        sentence = sentence.lower()
-        # eliminar puntuación
-        sentence = re.sub(r"'s\b", "", sentence)
-        sentence = re.sub(r"[^a-z0-9\s]", "", sentence)
-        clean_sentences.append(sentence)
+    # Tokenizar todas las oraciones
+    tokenized_sentences = [preprocess(sentence) for sentence in sentences]
 
-    # Crear vocabulario si no se pasa
+    # Crear vocabulario si no se proporciona
     if vocab is None:
-        all_words = set()
-        for sentence in clean_sentences:
-            words = sentence.split()
-            all_words.update(words)
-        vocab = sorted(all_words)
+        # Usar conjunto para palabras únicas y ordenar alfabéticamente
+        vocab = sorted(set(
+            word for sentence in tokenized_sentences for word in sentence))
 
-    features = vocab
-    s = len(clean_sentences)
-    f = len(features)
+    # Crear mapeo de palabra a índice
+    word_to_index = {word: idx for idx, word in enumerate(vocab)}
 
+    # Inicializar matriz de embeddings
+    # Número de oraciones
+    s = len(sentences)
+    # Número de características
+    f = len(vocab)
     embeddings = np.zeros((s, f), dtype=int)
 
-    # Construir la matriz BoW con frecuencia
-    for i in range(s):
-        words = clean_sentences[i].split()
-        for j in range(f):
-            embeddings[i, j] = words.count(features[j])
+    # Llenar la matriz de embeddings
+    for i, sentence_tokens in enumerate(tokenized_sentences):
+        for word in sentence_tokens:
+            if word in word_to_index:
+                embeddings[i, word_to_index[word]] += 1
 
-    return embeddings, features
+    return embeddings, vocab
