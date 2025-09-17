@@ -26,14 +26,11 @@ def word2vec_model(sentences, vector_size=100, min_count=5, window=5,
     Returns:
         model (gensim.models.Word2Vec): The trained Word2Vec model.
     """
-    # Tokenizar cada oración en palabras
-    tokenized_sentences = [sentence.lower().split() for sentence in sentences]
-
     # Determinar tipo de entrenamiento: 0 = CBOW, 1 = Skip-gram
     sg = 0 if cbow else 1
 
     # Crear el modelo Word2Vec usando la ruta completa
-    model = gensim.models.Word2Vec(sentences=tokenized_sentences,
+    model = gensim.models.Word2Vec(sentences=sentences,
                                    vector_size=vector_size,
                                    window=window,
                                    min_count=min_count,
@@ -42,7 +39,8 @@ def word2vec_model(sentences, vector_size=100, min_count=5, window=5,
                                    seed=seed,
                                    workers=workers)
     
-    # Entrenar el modelo sobre las oraciones tokenizadas
-    model.train(tokenized_sentences, total_examples=len(tokenized_sentences), epochs=epochs)
+    model.build_vocab(sentences)
+
+    model.train(sentences, total_examples=model.corpus_count, epochs=epochs)
     
     return model
