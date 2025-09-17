@@ -31,9 +31,9 @@ def fasttext_model(sentences, vector_size=100,
         gensim.models.FastText: The trained FastText model.
     """
     if cbow:
-        sg = 1
-    else:
         sg = 0
+    else:
+        sg = 1
 
     model = gensim.models.FastText(
         sentences=sentences,
@@ -47,10 +47,10 @@ def fasttext_model(sentences, vector_size=100,
         epochs=epochs
     )
 
-    model.build_vocab(sentences)
-
-    return model.train(
+    model.train(
         sentences,
         total_examples=model.corpus_count,
         epochs=epochs
     )
+
+    return model
