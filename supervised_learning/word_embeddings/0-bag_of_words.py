@@ -17,12 +17,12 @@ def bag_of_words(sentences, vocab=None):
                                 s = number of sentences, f = number of features
     features (list of str): List of vocabulary words used as features.
     """
-
-    # pasar a minúsculas y eliminar signos de puntuación
     clean_sentences = []
+
     for sentence in sentences:
+        # pasar a minúsculas
         sentence = sentence.lower()
-        # solo letras y números
+        # eliminar puntuación
         sentence = re.sub(r"[^a-z0-9\s]", "", sentence)
         clean_sentences.append(sentence)
 
@@ -38,14 +38,12 @@ def bag_of_words(sentences, vocab=None):
     s = len(clean_sentences)
     f = len(features)
 
-    # Inicializar matriz de embeddings
     embeddings = np.zeros((s, f), dtype=int)
 
-    # Construir la matriz BoW
+    # Construir la matriz BoW con frecuencia
     for i in range(s):
-        words_in_sentence = set(clean_sentences[i].split())
+        words = clean_sentences[i].split()
         for j in range(f):
-            if features[j] in words_in_sentence:
-                embeddings[i, j] = words.count(features[j])
+            embeddings[i, j] = words.count(features[j])
 
     return embeddings, features
