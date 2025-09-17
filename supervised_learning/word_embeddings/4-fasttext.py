@@ -31,9 +31,9 @@ def fasttext_model(sentences, vector_size=100,
         gensim.models.FastText: The trained FastText model.
     """
     if cbow:
-        sg = 0
-    else:
         sg = 1
+    else:
+        sg = 0
 
     model = gensim.models.FastText(
         sentences=sentences,
