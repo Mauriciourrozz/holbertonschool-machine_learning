@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+0-bag_of words.py
+"""
 import numpy as np
 import re
 
