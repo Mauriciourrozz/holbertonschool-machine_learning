@@ -17,35 +17,24 @@ def bag_of_words(sentences, vocab=None):
                                 s = number of sentences, f = number of features
     features (list of str): List of vocabulary words used as features.
     """
-    # Preprocesamiento: convertir a minúsculas y tokenizar
-    def preprocess(sentence):
-        # Convertir a minúsculas y eliminar caracteres no alfabéticos
-        sentence = re.sub(r'[^a-zA-Z\s]', '', sentence.lower())
-        return sentence.split()
+    tokenized_sentences = []
+    for sentence in sentences:
+        # Convertir a minúsculas y eliminar signos de puntuación
+        words = re.findall(r'\b\w+\b', sentence.lower())
+        tokenized_sentences.append(words)
 
-    # Tokenizar todas las oraciones
-    tokenized_sentences = [preprocess(sentence) for sentence in sentences]
-
-    # Crear vocabulario si no se proporciona
+    # Paso 2: construir vocabulario si no se proporciona
     if vocab is None:
-        # Usar conjunto para palabras únicas y ordenar alfabéticamente
-        vocab = sorted(set(
-            word for sentence in tokenized_sentences for word in sentence))
+        # Tomar todas las palabras únicas y ordenarlas
+        vocab = sorted(
+            {word for sentence in tokenized_sentences for word in sentence})
 
-    # Crear mapeo de palabra a índice
-    word_to_index = {word: idx for idx, word in enumerate(vocab)}
+    # Paso 3: crear la matriz de embeddings
+    embeddings = np.zeros((len(sentences), len(vocab)), dtype=int)
 
-    # Inicializar matriz de embeddings
-    # Número de oraciones
-    s = len(sentences)
-    # Número de características
-    f = len(vocab)
-    embeddings = np.zeros((s, f), dtype=int)
-
-    # Llenar la matriz de embeddings
-    for i, sentence_tokens in enumerate(tokenized_sentences):
-        for word in sentence_tokens:
-            if word in word_to_index:
-                embeddings[i, word_to_index[word]] += 1
+    # Contar las ocurrencias de cada palabra en cada oración
+    for i, sentence in enumerate(tokenized_sentences):
+        for j, word in enumerate(vocab):
+            embeddings[i, j] = sentence.count(word)
 
     return embeddings, vocab
