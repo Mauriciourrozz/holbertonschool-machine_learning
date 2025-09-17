@@ -36,7 +36,6 @@ def fasttext_model(sentences, vector_size=100,
         sg = 1
 
     model = gensim.models.FastText(
-        sentences=sentences,
         vector_size=vector_size,
         window=window,
         min_count=min_count,
@@ -45,6 +44,13 @@ def fasttext_model(sentences, vector_size=100,
         workers=workers,
         seed=seed,
         epochs=epochs
+    )
+
+    model.build_vocab(sentences)
+    model.train(
+    sentences,
+    total_examples=model.corpus_count,
+    epochs=epochs
     )
 
     return model
