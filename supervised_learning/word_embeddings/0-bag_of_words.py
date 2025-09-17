@@ -19,8 +19,12 @@ def bag_of_words(sentences, vocab=None):
     """
     tokenized_sentences = []
     for sentence in sentences:
-        # Convertir a minúsculas y eliminar puntuación y apóstrofes
-        words = re.findall(r'\b\w+\b', sentence.lower())
+        # Convertir a minúsculas
+        sentence = sentence.lower()
+        # Quitar apóstrofes
+        sentence = sentence.replace("'", "")
+        # Separar palabras eliminando signos de puntuación
+        words = re.findall(r'\b\w+\b', sentence)
         tokenized_sentences.append(words)
 
     # Construir vocabulario si no se proporciona
