@@ -4,6 +4,7 @@
 """
 import numpy as np
 import re
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 def tf_idf(sentences, vocab=None):
@@ -15,37 +16,23 @@ def tf_idf(sentences, vocab=None):
     Returns: embeddings, features.
     """
     # Tokenizar y limpiar cada oración
-    tokenized_sentences = [
-        re.findall(r'\b[a-zA-Z]{2,}\b', s.lower())
-        for s in sentences
-    ]
+    clean_sentences = list(map(
+        lambda s: " ".join(re.findall(r'\b[a-zA-Z]{2,}\b', s.lower())),
+        sentences
+    ))
 
-    # Construir vocabulario si no se proporciona
+    # Crear vocabulario si no se proporciona
     if vocab is None:
-        vocab = sorted({word for words in tokenized_sentences for word in words})
+        vocab = sorted(
+            {word for sent in clean_sentences for word in sent.split()})
 
-    N = len(sentences)
+    # Crear vectorizador TF-IDF
+    vectorizer = TfidfVectorizer(vocabulary=vocab)
 
-    # Calcular document frequency
-    df = {}
-    for word in vocab:
-        df[word] = sum(1 for sentence in tokenized_sentences if word in sentence)
+    # Generar matriz TF-IDF
+    embeddings = vectorizer.fit_transform(clean_sentences).toarray()
 
-    # Inicializar matriz
-    embeddings = np.zeros((N, len(vocab)), dtype=float)
+    # Extraer las features usadas
+    features = vectorizer.get_feature_names_out()
 
-    # Rellenar matriz TF-IDF
-    word_to_index = {word: i for i, word in enumerate(vocab)}
-
-    for i, words in enumerate(tokenized_sentences):
-        counts = {}
-        for w in words:
-            # frecuencia absoluta
-            counts[w] = counts.get(w, 0) + 1
-        for w, c in counts.items():
-            if w in word_to_index:
-                j = word_to_index[w]
-                idf = np.log((N + 1) / (1 + df[w]))
-                embeddings[i, j] = c * idf
-
-    return embeddings, np.array(vocab)
+    return embeddings, features
