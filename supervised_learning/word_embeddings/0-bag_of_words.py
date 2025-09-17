@@ -17,26 +17,27 @@ def bag_of_words(sentences, vocab=None):
                                 s = number of sentences, f = number of features
     features (list of str): List of vocabulary words used as features.
     """
-    tokenized_sentences = []
-    for sentence in sentences:
-        # Convertir a minúsculas
-        sentence = sentence.lower()
-        # Reemplazar apóstrofes dentro de las palabras
-        sentence = re.sub(r"(\w)'(\w)", r"\1\2", sentence)
-        # Separar palabras eliminando signos de puntuación
-        words = re.findall(r'\b\w+\b', sentence)
-        tokenized_sentences.append(words)
+    # Tokenizar y limpiar cada oración usando una comprensión de listas
+    tokenized_sentences = [
+        # palabras de 2 o más letras
+        re.findall(r'\b[a-zA-Z]{2,}\b', s.lower())
+        for s in sentences
+    ]
 
     # Construir vocabulario si no se proporciona
     if vocab is None:
         vocab = sorted(
-            {word for sentence in tokenized_sentences for word in sentence})
+            {word for words in tokenized_sentences for word in words})
 
+    word_to_index = {word: idx for idx, word in enumerate(vocab)}
+
+    # Inicializar matriz de embeddings
     embeddings = np.zeros((len(sentences), len(vocab)), dtype=int)
-    
-    for i, sentence in enumerate(tokenized_sentences):
-        for j, word in enumerate(vocab):
-            embeddings[i, j] = sentence.count(word)
-    
-    # Convertir vocab a array de numpy para pasar algunos tests automáticos
+
+    # Rellenar la matriz de embeddings
+    for i, words in enumerate(tokenized_sentences):
+        for word in words:
+            if word in word_to_index:
+                embeddings[i, word_to_index[word]] += 1
+
     return embeddings, np.array(vocab)
