@@ -61,22 +61,30 @@ class RNNDecoder(tf.keras.layers.Layer):
             s (tf.Tensor): Tensor of shape (batch, units), containing
                 the new decoder hidden state.
         """
-        # Calcular el vector de contexto usando la atención
-        context, _ = self.attention(s_prev, hidden_states)
+        # Inicializamos la capa de atención según el
+        # tamaño del estado oculto
+        attention_layer = SelfAttention(s_prev.shape[1])
 
-        # Convertir el índice de palabras anterior a embedding
-        x = self.embedding(x)
+        # Calculamos el vector de contexto a partir del estado
+        # oculto previo y las salidas del encoder
+        context_vector, _ = attention_layer(s_prev, hidden_states)
 
-        context = tf.expand_dims(context, 1)
+        # Obtenemos el embedding de la palabra previa del target
+        x_embedded = self.embedding(x)
 
-        # Concatenar vector de contexto e incrustar a lo largo del último eje
-        x = tf.concat([context, x], axis=-1)
+        # Concatenamos el vector de contexto y el embedding a lo
+        # largo del último eje
+        decoder_input = tf.concat([tf.expand_dims(context_vector, 1),
+                                   x_embedded], axis=-1)
 
-        # Pasar por GRU
-        output, s = self.gru(x, initial_state=s_prev)
+        # Pasamos la entrada concatenada por la GRU
+        gru_outputs, new_state = self.gru(decoder_input)
 
-        # Aplana la salida y pasa a través de la capa para obtener predicciones
-        output = tf.reshape(output, (-1, output.shape[2]))
-        y = self.F(output)
+        # Aplanamos las salidas de la GRU para pasarlas a la capa Dense
+        flattened_outputs = tf.reshape(gru_outputs, (gru_outputs.shape[0],
+                                                     gru_outputs.shape[2]))
 
-        return y, s
+        # Calculamos las predicciones de la siguiente palabra y retornamos
+        y_pred = self.F(flattened_outputs)
+
+        return y_pred, new_state
