@@ -5,7 +5,7 @@
 import tensorflow as tf
 
 
-class RNNEncoder(tf.keras.layers.layer):
+class RNNEncoder(tf.keras.layers.Layer):
     """
     RNNEncoder is a custom Keras Layer that encodes input sequences
     into hidden representations for machine translation.
@@ -29,6 +29,7 @@ class RNNEncoder(tf.keras.layers.layer):
             gru (tf.keras.layers.GRU): GRU layer with `units` hidden units,
                 returning both sequences and the final hidden state.
         """
+        super(RNNEncoder, self).__init__()
         self.batch = batch
         self.units = units
         self.embedding = tf.keras.layers.Embedding(vocab, embedding)
