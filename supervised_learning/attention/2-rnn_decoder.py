@@ -70,6 +70,8 @@ class RNNDecoder(tf.keras.layers.Layer):
         # Concatenar vector de contexto e incrustar a lo largo del último eje
         x = tf.concat([tf.expand_dims(context, 1), x], axis=-1)
 
+        x = tf.keras.layers.Dense(self.units)(x)
+
         # Pasar por GRU
         output, s = self.gru(x, initial_state=s_prev)
 
