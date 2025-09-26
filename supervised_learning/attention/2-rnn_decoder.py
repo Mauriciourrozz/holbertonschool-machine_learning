@@ -67,10 +67,10 @@ class RNNDecoder(tf.keras.layers.Layer):
         # Convertir el índice de palabras anterior a embedding
         x = self.embedding(x)
 
-        # Concatenar vector de contexto e incrustar a lo largo del último eje
-        x = tf.concat([tf.expand_dims(context, 1), x], axis=-1)
+        context = tf.expand_dims(context, 1)
 
-        x = tf.keras.layers.Dense(self.units)(x)
+        # Concatenar vector de contexto e incrustar a lo largo del último eje
+        x = tf.concat([context, x], axis=-1)
 
         # Pasar por GRU
         output, s = self.gru(x, initial_state=s_prev)
