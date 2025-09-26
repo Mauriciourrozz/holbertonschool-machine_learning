@@ -3,7 +3,6 @@
 9-transformer_encoder.py
 """
 import tensorflow as tf
-np = __import__('numpy')
 positional_encoding = __import__('4-positional_encoding').positional_encoding
 EncoderBlock = __import__('7-transformer_encoder_block').EncoderBlock
 
@@ -38,7 +37,7 @@ class Encoder(tf.keras.layers.Layer):
         self.dm = dm
         # Capa de embedding de entrada
         self.embedding = tf.keras.layers.Embedding(input_vocab, dm)
-        # Positional encoding
+        # Positional encoding directamente usando la función importada
         self.positional_encoding = positional_encoding(max_seq_len, dm)
         # Lista de EncoderBlocks
         self.blocks = [
