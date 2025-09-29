@@ -25,17 +25,23 @@ class Encoder(tf.keras.layers.Layer):
             EncoderBlock(dm, h, hidden, drop_rate) for _ in range(N)]
         self.dropout = tf.keras.layers.Dropout(drop_rate)
 
-    def call(self, x, training, mask):
-        """
-        Forward pass of the Transformer encoder.
-        """
-        seq_len = tf.shape(x)[1]
+def call(self, x, training, mask):
+    """
+    Forward pass of the Transformer encoder.
+    """
+    seq_len = tf.shape(x)[1]
 
-        x = self.embedding(x)
-        x += self.positional_encoding[:seq_len, :]
-        x = self.dropout(x, training=training)
+    x = self.embedding(x)
 
-        for block in self.blocks:
-            x = block(x, training, mask)
+    positions = self.positional_encoding[:seq_len, :]
+    positions = tf.expand_dims(positions, 0)
 
-        return x
+    x += positions
+
+    x = self.dropout(x, training=training)
+
+    for block in self.blocks:
+        x = block(x, training, mask)
+
+    return x
+
