@@ -24,7 +24,7 @@ class Encoder(tf.keras.layers.Layer):
         N (int): Number of encoder blocks.
         dm (int): Model dimensionality.
         embedding (tf.keras.layers.Embedding): Input embedding layer.
-        positional_encoding (np.ndarray): Positional encodings of shape
+        positional_encoding: Positional encodings of shape (max_seq_len, dm)
         (max_seq_len, dm)
         blocks (list): List of EncoderBlock instances.
         dropout (tf.keras.layers.Dropout): Dropout layer for positional
