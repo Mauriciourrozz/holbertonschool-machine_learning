@@ -23,10 +23,10 @@ class Encoder(tf.keras.layers.Layer):
     Public Attributes:
         N (int): Number of encoder blocks.
         dm (int): Model dimensionality.
-        embedding (tf.keras.layers.Embedding): Input embedding layer.
+        embedding: Input embedding layer.
         positional encoding: Positional encodings tensor of shape (max_seq_len, dm).
         blocks (list): List of EncoderBlock instances.
-        dropout (tf.keras.layers.Dropout): Dropout layer for positional encodings.
+        dropout: Dropout layer for positional encodings.
     """
     def __init__(self, N, dm, h, hidden, input_vocab, max_seq_len,
                  drop_rate=0.1):
@@ -48,12 +48,12 @@ class Encoder(tf.keras.layers.Layer):
         Forward pass of the Transformer encoder.
 
         Args:
-            x (tf.Tensor): Input tensor of shape (batch, input_seq_len)
+            x (Tensor): Input tensor of shape (batch, input_seq_len)
             training (bool): Boolean indicating if the model is training
-            mask (tf.Tensor or None): Mask for multi-head attention
+            mask (Tensor or None): Mask for multi-head attention
 
         Returns:
-            tf.Tensor: Output tensor of shape (batch, input_seq_len, dm)
+            Tensor: Output tensor of shape (batch, input_seq_len, dm)
         """
         seq_len = tf.shape(x)[1]
 
