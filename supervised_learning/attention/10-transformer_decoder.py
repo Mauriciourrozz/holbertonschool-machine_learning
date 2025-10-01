@@ -33,7 +33,7 @@ class Decoder(tf.keras.layers.Layer):
         self.dropout = tf.keras.layers.Dropout(drop_rate)
 
     def call(self, x, encoder_output, training,
-            look_ahead_mask, padding_mask):
+             look_ahead_mask, padding_mask):
         """
         Forward pass del Decoder.
         """
@@ -42,7 +42,7 @@ class Decoder(tf.keras.layers.Layer):
         # Convertir índices a embeddings
         x = self.embedding(x)
 
-        # Ajustar codificación posicional con dimensión extra
+        # Ajustar codificación posicional
         positions = self.positional_encoding[:seq_len, :]
         positions = tf.expand_dims(positions, 0)
 
@@ -55,6 +55,6 @@ class Decoder(tf.keras.layers.Layer):
         # Pasar por cada DecoderBlock
         for block in self.blocks:
             x = block(x, encoder_output, training,
-                    look_ahead_mask, padding_mask)
+                      look_ahead_mask, padding_mask)
 
         return x
