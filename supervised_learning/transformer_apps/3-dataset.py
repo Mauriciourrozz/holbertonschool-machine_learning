@@ -47,7 +47,8 @@ class Dataset:
         self.data_train = self.data_train.padded_batch(
             self.batch_size, padded_shapes=([None], [None])
         )
-        self.data_train = self.data_train.prefetch(tf.data.experimental.AUTOTUNE)
+        self.data_train = self.data_train.prefetch(
+            tf.data.experimental.AUTOTUNE)
 
         # Tokenizar y preparar dataset de validación
         self.data_valid = self.data_valid.map(
