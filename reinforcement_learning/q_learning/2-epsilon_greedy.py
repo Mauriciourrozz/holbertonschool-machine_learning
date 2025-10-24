@@ -25,5 +25,5 @@ def epsilon_greedy(Q, state, epsilon):
     else:
         # elegir la mejor acción conocida
         action = np.argmax(Q[state])
-    
+
     return action
