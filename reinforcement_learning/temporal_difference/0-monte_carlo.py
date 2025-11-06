@@ -20,48 +20,38 @@ def monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1,
     - V: the updated value estimates (numpy.ndarray).
     """
 
-    # diccionario para guardar todos los retornos por estado
-    retornos = {}
-    for s in range(len(V)):
-        retornos[s] = []
-
-    # recorrer todos los episodios
+    # recorrer el número de episodios
     for episodio in range(episodes):
-        # reiniciar entorno y variables
-        estado, _ = env.reset()
-        episodio_datos = []
+        # inicializar estado
+        estado, _ = env.reset()[0]
+        # almacenar secuencia de (estado, recompensa)
+        datos_ep = []
 
         # generar un episodio
         for paso in range(max_steps):
-            accion = policy(estado)  # elegir acción con la política
+            # elegir acción según la política
+            accion = policy(estado)
             sig_estado, recompensa, terminado, fallo, _ = env.step(accion)
+            # guardar datos del episodio
+            datos_ep.append((estado, recompensa))
 
-            # guardar datos
-            episodio_datos.append((estado, recompensa))
-            # avanzar al siguiente estado
+            if terminado or fallo:
+                break 
+            # mover al siguiente estado
             estado = sig_estado
 
-            # terminar si el episodio finaliza
-            if terminado or fallo:
-                break
+        # calcular los retornos en orden inverso
+        # inicializar el retorno
+        G = 0
+        # convertir a array numpy
+        datos_ep = np.array(datos_ep, dtype=int)
 
-        # calcular retornos hacia atrás
-        # retorno acumulado
-        G = 0.0
-        # para first-visit Monte Carlo
-        visitados = set()
-
-        for estado_t, recompensa in reversed(episodio_datos):
-            # retorno descontado
+        for estado, recompensa in reversed(datos_ep):
+            # calcular retorno
             G = recompensa + gamma * G
 
-            # si el estado no fue visitado antes en este episodio
-            if estado_t not in visitados:
-                visitados.add(estado_t)
-                # guardar retorno
-                retornos[estado_t].append(G)
-                # promedio de retornos
-                V[estado_t] = np.mean(retornos[estado_t])
+            # actualizar V(s) usando el promedio incremental (first-visit MC)
+            if estado not in datos_ep[:episodio, 0]:
+                V[estado] += alpha * (G - V[estado])
 
-    # devolver la estimación de valores actualizada
-    return V
+    return V  # devolver el valor actualizado
