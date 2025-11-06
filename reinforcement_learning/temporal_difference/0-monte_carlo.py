@@ -5,7 +5,8 @@
 import numpy as np
 
 
-def monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99):
+def monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1,
+                gamma=0.99):
     """
     Perform first-visit Monte Carlo policy evaluation.
 
@@ -19,49 +20,48 @@ def monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1, gamma=0
     - V: the updated value estimates (numpy.ndarray).
     """
 
-    # entrenar por la cantidad de episodios indicada
+    # diccionario para guardar todos los retornos por estado
+    retornos = {}
+    for s in range(len(V)):
+        retornos[s] = []
+
+    # recorrer todos los episodios
     for episodio in range(episodes):
-        # reiniciar el entorno y variables del episodio
+        # reiniciar entorno y variables
         estado, _ = env.reset()
-        estados_ep = []
-        recompensas_ep = []
+        episodio_datos = []
 
-        # generar un episodio (hasta max_steps o hasta done)
+        # generar un episodio
         for paso in range(max_steps):
-            # obtener acción de la política
-            accion = policy(estado)
+            accion = policy(estado)  # elegir acción con la política
+            sig_estado, recompensa, terminado, fallo, _ = env.step(accion)
 
-            # ejecutar la acción en el entorno
-            siguiente_estado, recompensa, terminado, _, info = env.step(accion)
+            # guardar datos
+            episodio_datos.append((estado, recompensa))
+            # avanzar al siguiente estado
+            estado = sig_estado
 
-            # almacenar experiencia
-            estados_ep.append(estado)
-            recompensas_ep.append(recompensa)
-
-            # avanzar
-            estado = siguiente_estado
-
-            if terminado:
+            # terminar si el episodio finaliza
+            if terminado or fallo:
                 break
 
-        # actualizar V usando first-visit Monte Carlo con learning rate alpha
-        T = len(estados_ep)
-        # para cada tiempo t en el episodio calculamos el retorno G desde t
-        for t in range(T):
-            estado_t = estados_ep[t]
+        # calcular retornos hacia atrás
+        # retorno acumulado
+        G = 0.0
+        # para first-visit Monte Carlo
+        visitados = set()
 
-            # verificar si es la primera vez que aparece estado_t en el episodio
-            if estado_t in estados_ep[:t]:
-                continue
+        for estado_t, recompensa in reversed(episodio_datos):
+            # retorno descontado
+            G = recompensa + gamma * G
 
-            # calcular el retorno G desde t (suma descontada)
-            retorno = 0.0
-            factor = 1.0
-            for k in range(t, T):
-                retorno += factor * recompensas_ep[k]
-                factor *= gamma
+            # si el estado no fue visitado antes en este episodio
+            if estado_t not in visitados:
+                visitados.add(estado_t)
+                # guardar retorno
+                retornos[estado_t].append(G)
+                # promedio de retornos
+                V[estado_t] = np.mean(retornos[estado_t])
 
-            # actualizar la estimación de valor para el estado (regla incremental con alpha)
-            V[estado_t] = V[estado_t] + alpha * (retorno - V[estado_t])
-
+    # devolver la estimación de valores actualizada
     return V
