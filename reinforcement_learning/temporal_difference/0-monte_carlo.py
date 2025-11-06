@@ -8,50 +8,52 @@ import numpy as np
 def monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1,
                 gamma=0.99):
     """
-    Perform first-visit Monte Carlo policy evaluation.
-
-    Assumes:
-    - env.reset() returns an initial state (integer index for V).
-    - env.step(action) returns (next_state, reward, done, info).
-    - policy(state) returns an action for the given state.
-    - V is a numpy array of shape (s,) with initial value estimates.
-
+    This function performs the Monte Carlo algorithm to estimate the value
+    function. It updates the value estimate V using the incremental mean.
+    Args:
+    - env: The environment instance.
+    - V: numpy.ndarray of shape (s,) containing the value estimate.
+    - policy: Function that takes a state and returns the next action.
+    - episodes: Number of episodes to train over.
+    - max_steps: Maximum number of steps per episode.
+    - alpha: Learning rate.
+    - gamma: Discount rate.
     Returns:
-    - V: the updated value estimates (numpy.ndarray).
+    - Updated V, the updated value estimate.
     """
-
-    # recorrer el número de episodios
+    # Iterar sobre el número total de episodios
     for episodio in range(episodes):
-        # inicializar estado
-        estado, _ = env.reset()[0]
-        # almacenar secuencia de (estado, recompensa)
-        datos_ep = []
+        # Reiniciar el entorno
+        estado = env.reset()[0]
+        # Lista para almacenar (estado, recompensa)
+        datos_episodio = []
 
-        # generar un episodio
+        # Generar un episodio completo
         for paso in range(max_steps):
-            # elegir acción según la política
+            # Elegir acción según la política
             accion = policy(estado)
-            sig_estado, recompensa, terminado, fallo, _ = env.step(accion)
-            # guardar datos del episodio
-            datos_ep.append((estado, recompensa))
+            nuevo_estado, recompensa, terminado, truncado, _ = env.step(accion)
+            # Guardar estado y recompensa
+            datos_episodio.append((estado, recompensa))
 
-            if terminado or fallo:
-                break 
-            # mover al siguiente estado
-            estado = sig_estado
+            if terminado or truncado:
+                break
 
-        # calcular los retornos en orden inverso
-        # inicializar el retorno
-        G = 0
-        # convertir a array numpy
-        datos_ep = np.array(datos_ep, dtype=int)
+            # Pasar al siguiente estado
+            estado = nuevo_estado
 
-        for estado, recompensa in reversed(datos_ep):
-            # calcular retorno
-            G = recompensa + gamma * G
+        # Calcular los retornos en orden inverso
+        retorno = 0
+        # Convertir a array
+        datos_episodio = np.array(datos_episodio, dtype=int)
 
-            # actualizar V(s) usando el promedio incremental (first-visit MC)
-            if estado not in datos_ep[:episodio, 0]:
-                V[estado] += alpha * (G - V[estado])
+        for estado, recompensa in reversed(datos_episodio):
+            # Calcular retorno acumulado
+            retorno = recompensa + gamma * retorno
 
-    return V  # devolver el valor actualizado
+            # Actualizar V(s) usando la media incremental (primer visita)
+            if estado not in datos_episodio[:episodio, 0]:
+                V[estado] += alpha * (retorno - V[estado])
+
+    # Devolver la función de valor actualizada
+    return V
