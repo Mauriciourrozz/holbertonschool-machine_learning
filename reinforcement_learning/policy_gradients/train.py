@@ -7,7 +7,7 @@ policy_gradient = __import__('policy_gradient').policy_gradient
 policy = __import__('policy_gradient').policy
 
 
-def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
+def train(env, nb_episodes, alpha=0.000045, gamma=0.98, show_result=False):
     """
     Trains an agent using Monte-Carlo policy gradient.
 
@@ -16,6 +16,7 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
         nb_episodes (int): number of episodes
         alpha (float): learning rate
         gamma (float): discount factor
+        show_result (bool): If True, render environment every 1000 episodes
 
     Returns:
         list: scores for each episode
@@ -28,11 +29,14 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
 
     for episode in range(nb_episodes):
 
-        # Gymnasium returns (observation, info)
         state = env.reset()[0]
         grads = []
         rewards = []
         done = False
+
+        # Render only if enabled and episode multiple of 1000
+        if show_result and episode % 1000 == 0:
+            env.render()
 
         while not done:
             action, grad = policy_gradient(state, weight)
@@ -47,6 +51,7 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
         score = sum(rewards)
         scores.append(score)
 
+        # Monte Carlo return and weight update
         G = 0
         for t in reversed(range(len(rewards))):
             G = rewards[t] + gamma * G
