@@ -23,4 +23,4 @@ def policy(matrix, weight):
     exp_vals = np.exp(logits - np.max(logits))
     probs = exp_vals / np.sum(exp_vals)
 
-    return probs.squeeze()
+    return probs
