@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+train.py
+"""
 import numpy as np
 policy_gradient = __import__('policy_gradient').policy_gradient
 policy = __import__('policy_gradient').policy
