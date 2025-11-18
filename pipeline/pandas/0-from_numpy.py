@@ -2,6 +2,7 @@
 """
 0-from_numpy.py
 """
+import pandas as pd
 
 
 def from_numpy(array):
