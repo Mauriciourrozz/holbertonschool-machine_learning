@@ -16,7 +16,7 @@ def slice(df):
         pd.DataFrame: The sliced DataFrame.
     """
     # Quedarse solo con las columnas necesarias
-    sub = df[['High', 'Low', 'Close', 'Volume_BTC']]
+    sub = df[['High', 'Low', 'Close', 'Volume_(BTC)']]
 
     # Seleccionar cada fila número 60
     return sub.iloc[::60]
