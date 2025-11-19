@@ -20,8 +20,8 @@ def rename(df):
     # Cambiar nombre de columna
     df = df.rename(columns={'Timestamp': 'Datetime'})
 
-    # Convertir a datetime
-    df['Datetime'] = pd.to_datetime(df['Datetime'])
+    # Convertir a datetimedf
+    ['Datetime'] = pd.to_datetime(df['Datetime'], unit='s')
 
     # Mostrar solo estas dos columnas
     df = df[['Datetime', 'Close']]
