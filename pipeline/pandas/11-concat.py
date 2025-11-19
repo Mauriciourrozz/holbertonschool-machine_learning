@@ -2,6 +2,7 @@
 """
 11-concat.py
 """
+import pandas as pd
 index = __import__('10-index').index
 
 
