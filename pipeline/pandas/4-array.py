@@ -2,7 +2,6 @@
 """
 4-array.py
 """
-import pandas as pd
 
 
 def array(df):
