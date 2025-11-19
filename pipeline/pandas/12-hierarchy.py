@@ -30,6 +30,7 @@ def concat(df1, df2):
 
     return result
 
+
 def hierarchy(df1, df2):
     """
     Reorganizes the MultiIndex so Timestamp is first,
