@@ -2,7 +2,7 @@
 """
 4-array.py
 """
-import numpy as np
+import pandas as pd
 
 
 def array(df):
@@ -16,10 +16,5 @@ def array(df):
     Returns:
         numpy.ndarray: Array with the last 10 rows of High and Close.
     """
-    # Seleccionar últimas 10 filas
     last = df[['High', 'Close']].tail(10)
-
-    # Convertir a ndarray
-    lastest = last.to_numpy()
-
-    return lastest
+    return last.to_numpy()
