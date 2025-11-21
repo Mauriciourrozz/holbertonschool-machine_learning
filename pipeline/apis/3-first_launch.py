@@ -4,37 +4,30 @@ Script that displays the first SpaceX launch
 """
 
 
+def get_json(url):
+    return requests.get(url).json()
+
 if __name__ == "__main__":
-    # Endpoint de lanzamientos
-    launches_url = "https://api.spacexdata.com/v4/launches"
+    # Obtener todos los lanzamientos próximos
+    upcoming = get_json("https://api.spacexdata.com/v4/launches/upcoming")
 
-    launches = requests.get(launches_url).json()
+    # Ordenar por fecha usando date_unix
+    first_launch = sorted(upcoming, key=lambda l: l["date_unix"])[0]
 
-    # Ordenar por date_unix (segundos)
-    launches_sorted = sorted(launches, key=lambda x: x.get("date_unix", 0))
+    # Obtener datos del cohete
+    rocket_id = first_launch["rocket"]
+    rocket_info = get_json(f"https://api.spacexdata.com/v4/rockets/{rocket_id}")
 
-    # Primer lanzamiento
-    first = launches_sorted[0]
+    # Obtener datos de la plataforma
+    pad_id = first_launch["launchpad"]
+    pad_info = get_json(f"https://api.spacexdata.com/v4/launchpads/{pad_id}")
 
-    # Obtener datos individuales
-    launch_name = first["name"]
+    # Fecha en local time ya viene dada por la API
+    local_date = first_launch["date_local"]
 
-    # Convertimos fecha a local
-    date_local = datetime.fromtimestamp(
-        first["date_unix"]).strftime("%Y-%m-%d %H:%M:%S")
-
-    # Obtener detalles del cohete
-    rocket_id = first["rocket"]
-    rocket = requests.get(
-        f"https://api.spacexdata.com/v4/rockets/{rocket_id}").json()
-    rocket_name = rocket["name"]
-
-    # Obtener detalles del launchpad
-    pad_id = first["launchpad"]
-    pad = requests.get(
-        f"https://api.spacexdata.com/v4/launchpads/{pad_id}").json()
-    pad_name = pad["name"]
-    pad_locality = pad["locality"]
-
-    # Formato de salida
-    print(f"{launch_name} ({date_local}) {rocket_name} - {pad_name} ({pad_locality})")
+    # Imprimir
+    print(
+        f"{first_launch['name']} ({local_date}) "
+        f"{rocket_info['name']} - "
+        f"{pad_info['name']} ({pad_info['locality']})"
+    )
