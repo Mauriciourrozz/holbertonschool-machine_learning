@@ -2,6 +2,7 @@
 """
 Script that displays the first SpaceX launch
 """
+import requests
 
 
 def get_json(url):
