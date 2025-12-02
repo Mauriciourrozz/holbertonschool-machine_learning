@@ -1,6 +1,6 @@
 -- This script lists all shows with the sum of their ratings
 SELECT tv_shows.title,
-       SUM(tv_show_ratings.rating) AS rating
+       SUM(tv_show_ratings.rate) AS rating
 FROM tv_shows
 JOIN tv_show_ratings ON tv_shows.id = tv_show_ratings.show_id
 GROUP BY tv_shows.title
