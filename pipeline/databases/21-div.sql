@@ -2,7 +2,7 @@
 DELIMITER $$
 
 CREATE FUNCTION SafeDiv(a INT, b INT)
-RETURNS INT
+RETURNS DECIMAL(10,5)
 DETERMINISTIC
 BEGIN
     -- Si el divisor es 0, devolver 0
